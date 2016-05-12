@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+
+		<title>PUPILS: THE GAME</title>
+		
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/foundation/6.2.1/foundation.min.css">
+		<link rel="stylesheet" href="/css/style.css">
+		
+		<meta charset="utf-8" /> 
+		
+		<script src="https://code.jquery.com/jquery-1.12.3.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/foundation/6.2.1/foundation.min.js"></script>
+
+	</head>
+
+	<body>
+
+		<div class="callout large primary">
+			<div class="row column text-center">
+				<h1>PUPILS: THE GAME</h1>
+				<h4>By David Gil de G&oacute;mez P&eacute;rez</h4>
+			</div>
+		</div>
+		
+		<div class="row">
+		
+			<div class="large-8 large-centered medium-8 medium-centered columns">
+			<p class="text-center">The pupil is the black thing that is in the middle of the eye. 
+			Please click the center of that circle/ellipse on each image that
+			you will be shown. This way you will earn your way to the first 
+			place in the leaderboard</p>
+			</div>
+			
+		</div>
+		
+		<div class="row">
+		
+			<div class="large-8 large-centered medium-8 medium-centered columns">
+			<hr/>
+			</div>
+			
+		</div>
+		
+		<div class="row">
+		
+			<div class="large-8 large-centered medium-8 medium-centered columns"">
+			<p class="text-center">The point you have to click is the one pointed by the green arrow
+			in the following image. The red circle surrounds the pupil. And the whole image is of an
+			eye under infrared light.</p> 
+			</div>
+		
+		</div>
+		
+		<div class="row">
+		
+			<div class="large-8 large-centered medium-8 medium-centered columns">
+			<img class="smaller centered" src="/static/explanation.jpg" alt="explanation" />
+			</div>
+		
+		</div>
+		
+		<div class="row">
+		
+			<div class="large-8 large-centered medium-8 medium-centered columns">
+			<hr/>
+			</div>
+			
+		</div>
+		
+		<div class="row">
+		
+			<div class="large-8 large-centered medium-8 medium-centered columns">
+			<p class="text-center">You will need a modern browser, I suggest Firefox or Chrome.</p>
+			</div>
+		
+		</div>
+		
+		
+		
+		<div class="row">
+		
+			<div class="large-8 large-centered medium-8 medium-centered columns">
+			<hr/>
+			</div>
+			
+		</div>
+		
+		<div class="row">
+			
+			<div class="large-8 large-centered medium-8 medium-centered columns">
+			
+				<h2 class="text-center">WANNA PLAY?</h2>
+			
+				<a href="{{ url('signup') }}" class="button expanded">Create a new PlayerID</a>
+				<a href="{{ url('start') }}" class="button expanded">Login with an existing PlayerID</a>
+				
+			</div>
+			
+		</div>
+		
+		<div class="row">
+		
+			<div class="large-8 large-centered medium-8 medium-centered columns">
+			<hr/>
+			</div>
+			
+		</div>
+		
+		<div class="row">
+		
+			<div class="large-8 large-centered medium-8 medium-centered columns">
+			
+				<h2 class="text-center">ROAD TO THE GOAL!</h2>
+			
+				<div class="progress">
+				<span class="progress-meter" style="width:{% if percentage > 100 %}100{% else %}{{ percentage }}{% endif %}%">
+					<p class="progress-meter-text text-center">{{ percentage }}%</p>
+				</span>
+				</div>
+
+			</div>
+			
+		</div>
+		
+		{% if leaderboard %}
+		
+		<div class="row">
+		
+			<div class="large-8 large-centered medium-8 medium-centered columns">
+			<hr/>
+			</div>
+			
+		</div>
+		
+		<div class="row">
+		
+			<div class="large-8 large-centered medium-8 medium-centered columns">
+			
+				<h2 class="text-center">TOP 3</h2>
+		
+				<table border="1">
+				
+					<thead>
+					
+						<tr>
+						
+							<td>Player</td>
+							<td>Pupils detected</td>
+						
+						</tr>
+					
+					</thead>
+					
+					<tbody>
+					
+						{% for user in leaderboard %}
+						<tr>
+							<td>{{ user.username }}</td>
+							<td>{{ user.N }}</td>
+						</tr>
+						{% endfor %}
+					
+					</tbody>
+					
+				</table>
+			
+			</div>
+			
+		</div>
+		
+		{% endif %}
+		
+		<script>
+		
+		$(document).foundation();
+		
+		</script>
+		
+	</body>
+
+</html>

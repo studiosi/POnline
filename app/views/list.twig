@@ -1,0 +1,174 @@
+<html>
+
+	<head>
+
+		<title>PUPILS: THE GAME | ADMIN ZONE</title>    	
+    	
+    	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.11/css/jquery.dataTables.min.css" />
+    	<link rel="stylesheet" href="https://cdn.jsdelivr.net/foundation/6.2.1/foundation.min.css">
+		<link rel="stylesheet" href="/css/style.css">
+		
+		<meta charset="utf-8" /> 
+		
+		<script src="https://code.jquery.com/jquery-1.12.3.min.js"></script>
+		<script src="https://cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/foundation/6.2.1/foundation.min.js"></script>
+    
+    </head>
+
+	<body>
+
+		<div class="top-bar">
+		
+		<div class="top-bar-left">
+		
+			<ul class="dropdown menu">
+				
+				<li class="menu-text">Pupils: The Game | Admin Zone</li>
+			
+			</ul>
+		
+		</div>
+		
+		<div class="top-bar-right">
+			<ul class="menu">
+				<li><a class="button" href="{{ url('admin_logout') }}">LOG OUT</a></li>
+			</ul>
+		</div>
+		
+		</div>
+
+		<div class="row">
+		
+			<div class="large-8 large-centered medium-8 medium-centered columns">
+				<h2>IMAGE LIST</h2>		
+		
+				{% if images %}
+				
+					<table id="images" class="display" cellspacing="0" width="100%">
+			        <thead>
+			            <tr>
+			                <th>ID</th>
+			                <th>Filename</th>
+			                <th>#User Clicks</th>
+			                <th>Actions</th>
+			            </tr>
+			        </thead>
+			        <tfoot>
+			            <tr>
+			                <th>ID</th>
+			                <th>Filename</th>
+			                <th>#User Clicks</th>
+			                <th>Actions</th>
+			            </tr>
+			        </tfoot>
+			        <tbody>
+			        	
+			        	{% for image in images %}
+			        	
+			        		<tr>
+								
+								<td>{{ image.id }}</td>
+								<td>{{ image.filename }}</td>
+								<td>{{ image.n_clicks }}</td>
+								<td>
+								
+									<a href="{{ url('admin_show', {id: image.id}) }}">View</a>							
+								
+								</td>	        		
+			        		
+			        		</tr>
+			        	
+			        	{% endfor %}
+			        	
+			        </tbody>
+			        </table>
+			        
+		        {% else %}
+		        
+		        	<strong>There are no images yet...</strong>
+		        
+		        {% endif %}
+			</div>
+			
+		</div>		      
+        
+        
+        <div class="row">
+			<div class="large-8 large-centered medium-8 medium-centered columns">
+        		<hr/>
+        	</div>
+        </div>
+        
+        
+        <div class="row">
+			<div class="large-8 large-centered medium-8 medium-centered columns">
+		        <h2>PLAYER LIST</h2>
+		        
+		        {% if players %}
+		        
+					<table id="players" class="display" cellspacing="0" width="100%">
+			        <thead>
+			            <tr>
+			                <th>ID</th>
+			                <th>Player Name</th>
+			                <th>#Clicks</th>
+			                <th>Status</th>
+			                <th>Actions</th>
+			            </tr>
+			        </thead>
+			        <tfoot>
+			            <tr>
+			                <th>ID</th>
+			                <th>Player Name</th>
+			                <th>#Clicks</th>
+			                <th>Status</th>
+			                <th>Actions</th>
+			            </tr>
+			        </tfoot>
+			        <tbody>        
+			        
+			        	{% for player in players %}
+			        
+			        		<tr>
+			        		
+			        			<td>{{ player.id }}</td>
+			        			<td>{{ player.username }}</td>
+			        			<td>{{ player.N }}</td>
+			        			<td>{{ player.status }}</td>
+			        			<td><a href="{{ url('player_manage', {'id' : player.id}) }}">Manage</a></td>	        			
+			        		
+			        		</tr>
+			        		
+			        	{% endfor %}
+			        
+			        </tbody>
+			        </table>	        
+		        
+		        {% else %}
+		        
+		        	<strong>There are no players yet...</strong>
+		        
+		        {% endif %}
+			</div>
+		</div>		       
+	        
+        <br/>
+        
+		
+		<script>
+
+		$(document).ready(function() {
+
+			$('#images').DataTable();
+			$('#players').DataTable();
+			
+		});
+
+		$(document).foundation();
+
+		</script>
+		
+	</body>
+
+</html>

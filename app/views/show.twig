@@ -1,0 +1,95 @@
+<html>
+
+	<head>
+
+		<title>PUPILS: THE GAME | IMAGE DATA</title>
+		
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/foundation/6.2.1/foundation.min.css">
+		<link rel="stylesheet" href="/css/style.css">
+		
+		<meta charset="utf-8" /> 
+		
+		<script src="https://code.jquery.com/jquery-1.12.3.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/foundation/6.2.1/foundation.min.js"></script>
+
+	</head>
+
+	<body>
+	
+		<div class="top-bar">
+		
+		<div class="top-bar-left">
+		
+			<ul class="dropdown menu">
+				<li class="menu-text">Pupils: The Game | Show Image</li>
+				<li class="menu-text">Image: {{ image.filename }} (id: {{ image.id }})</li>			
+			</ul>
+		
+		</div>
+		
+		<div class="top-bar-right">
+			<ul class="menu">
+				
+				<li>
+				
+					{% if id_player is defined %}
+		
+						<a class="button" href="{{ url('player_manage', {'id' : id_player }) }}">Back</a>
+					
+					{% else %}
+					
+						<a class="button" href="{{ url('admin_menu') }}">Back</a>
+					
+					{% endif %}
+				
+				</li>
+	
+			</ul>
+		</div>
+		
+		</div>
+	
+		<div class="margin-top">
+		<canvas class="canvas-centered" id="image">YOUR BROWSER SUCKS AND THIS WON'T WORK. UPDATE NOW!</canvas>
+		</div>
+				
+		
+		
+		<script>
+
+			var cnv = document.getElementById('image');
+			var ctx = cnv.getContext('2d');
+			var pointList={{ pointList }};
+			var centroid={{ centroid }};
+
+			var imageObj = new Image();
+			imageObj.onload = function() {
+
+				ctx.canvas.width = this.width;
+				ctx.canvas.height = this.height;								
+				ctx.drawImage(imageObj, 0, 0);
+
+				pointList.forEach(function(element, index, array) {
+					ctx.beginPath();
+					ctx.arc(element[0], element[1], 1, 0, 2 * Math.PI, false);
+					ctx.fillStyle = 'red';
+					ctx.fill();
+				});
+
+				ctx.beginPath();
+				ctx.beginPath();
+				ctx.moveTo(centroid[0] - 10, centroid[1]);
+				ctx.lineTo(centroid[0] + 10, centroid[1]);
+				ctx.moveTo(centroid[0], centroid[1] - 10);
+				ctx.lineTo(centroid[0], centroid[1] + 10);
+				ctx.strokeStyle="yellow";
+				ctx.stroke();				
+
+			}
+			imageObj.src = "/img/{{ image.filename }}";			
+
+		</script>			
+	
+	</body>
+
+</html>	

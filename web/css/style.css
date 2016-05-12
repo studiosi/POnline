@@ -1,0 +1,35 @@
+img.smaller {
+	
+	width: 500px;
+	height: 388px;
+	
+}
+
+.centered {
+	
+	display: block;
+	margin: auto;
+	
+}
+
+.log-in-form {
+	
+	border: 1px solid #cacaca;
+	padding: 1rem;
+	border-radius: 3px;
+	margin-top: 2rem;
+  
+}
+
+.canvas-centered {
+	
+	display: block;
+	margin: auto;
+	
+}
+
+.margin-top {
+	
+	margin-top: 2rem;
+	
+}

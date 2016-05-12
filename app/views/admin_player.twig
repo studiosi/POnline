@@ -1,0 +1,150 @@
+<html>
+
+
+	<head>
+	
+		<title>PUPILS: THE GAME | MANAGE PLAYER</title>    	
+    	
+    	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.11/css/jquery.dataTables.min.css" />
+    	<link rel="stylesheet" href="https://cdn.jsdelivr.net/foundation/6.2.1/foundation.min.css">
+		<link rel="stylesheet" href="/css/style.css">
+		
+		<meta charset="utf-8" /> 
+		
+		<script src="https://code.jquery.com/jquery-1.12.3.min.js"></script>
+		<script src="https://cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/foundation/6.2.1/foundation.min.js"></script>
+			  
+	
+	</head>
+
+	<body>
+	
+		<div class="top-bar">
+		
+		<div class="top-bar-left">
+		
+			<ul class="dropdown menu">
+				
+				<li class="menu-text">Pupils: The Game | Player Management</li>
+				<li class="menu-text">Player: {{ player.username }} (id: {{ player.id }})</li>
+				<li class="menu-text">[
+					{% if player.status == 'OPE' %}
+						OPERATIVE
+					{% elseif player.status == 'BAN' %}
+						BANNED
+					{% endif %}
+				]</li>
+				
+			</ul>
+		
+		</div>
+		
+		<div class="top-bar-right">
+			<ul class="menu">
+				<li>
+				{% if player.status == 'OPE' %}
+					<a class="button" href="#" onclick="userOp();">BAN</a>
+				{% elseif player.status == 'BAN' %}
+					<a class="button" href="#" onclick="userOp();">UNBAN</a>
+				{% endif %}
+				</li>
+				<li><a class="button" href="{{ url('admin_menu') }}">BACK</a></li>
+			</ul>
+		</div>
+		
+		</div>
+	
+		
+		<div class="row">
+		
+		<div class="large-8 large-centered medium-8 medium-centered columns">
+		
+		<h2>CLICKS PER IMAGE</h2>		
+		
+		{% if images %}
+		
+			<table id="images" class="display" cellspacing="0" width="100%">
+	        <thead>
+	            <tr>
+	                <th>ID</th>
+	                <th>Filename</th>
+	                <th>Actions</th>
+	            </tr>
+	        </thead>
+	        <tfoot>
+	            <tr>
+	                <th>ID</th>
+	                <th>Filename</th>
+	                <th>Actions</th>
+	            </tr>
+	        </tfoot>
+	        <tbody>
+	        	
+	        	{% for image in images %}
+	        	
+	        		<tr>
+						
+						<td>{{ image.id }}</td>
+						<td>{{ image.filename }}</td>
+						<td>
+						
+							<a href="{{ url('player_points', {'id_player' : player.id, 'id_photo' : image.id}) }}">View</a>						
+						
+						</td>	        		
+	        		
+	        		</tr>
+	        	
+	        	{% endfor %}
+	        	
+	        </tbody>
+	        </table>
+	        
+        {% else %}
+        
+        	<strong>There are no images yet...</strong>
+        
+        {% endif %}
+		
+		</div>
+		
+		</div>
+		
+		
+		<script>
+
+		$(document).ready(function() {
+
+			$('#images').DataTable();
+			
+		});
+
+		function userOp() {
+
+			console.log("X");
+			
+			var t = '{{ token }}';	
+			var id = '{{ player.id }}';	
+	
+			{% if player.status == 'OPE' %}
+				var op = "BAN";
+			{% elseif player.status == 'BAN' %}
+				var op = "OPE";
+			{% endif %}
+	
+			$.ajax({
+				url:"{{ url('userop') }}",
+				type:"POST",
+				success:function(data) {
+					window.location.href = "{{ url('player_manage', {'id' : player.id}) }}";
+				},
+				data:{"t":t,"op":op,"id":id}
+			});
+			
+		}
+		</script>
+		
+	
+	</body>
+
+</html>

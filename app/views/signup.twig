@@ -1,0 +1,92 @@
+<html>
+
+	<head>
+
+		<title>PUPILS: THE GAME | PLAYER SIGNUP</title>
+		
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/foundation/6.2.1/foundation.min.css">
+		<link rel="stylesheet" href="/css/style.css">
+		
+		<meta charset="utf-8" /> 
+		
+		<script src="https://code.jquery.com/jquery-1.12.3.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/foundation/6.2.1/foundation.min.js"></script>
+
+	</head>
+
+	<body>
+
+		<div class="row">
+			<div class="medium-6 medium-centered large-6 large-centered columns">
+			
+				<form id="signup" name="signup" action="" method="POST">
+			
+				<div class="log-in-form">
+				
+					<h4 class="text-center">SIGNUP NOW!</h4>
+					
+					<p>
+					this will allow you to track your progress. You will be able to login with your 
+					PlayerID after successfully creating it!
+					</p>
+					
+					<p>
+					<strong>Note: </strong>Remember your password, there is no way to recover it 
+					if you lose it.
+					</p>
+					
+					{% if errors is defined %}
+					
+						<div class="alert callout">
+					
+						<strong>ERRORS:&nbsp;</strong>
+		
+						<ul>
+						
+							{% for error in errors %}
+							
+								<li>{{ error }}</li>
+							
+							{% endfor %}
+						
+						</ul>
+						
+						</div>
+					
+					{% endif %}
+					
+
+					<label for="username">Username:
+						<input type="text" name="username" id="username" value="{% if data.username is defined %}{{ data.username }}{% endif %}">
+					</label>
+
+				
+					<label for="pwd">Password:
+						<input type="password" name="pwd" id="pwd">
+					</label>
+					
+					<label for="pwd_repeat">Repeat Password:
+						<input type="password" name="pwd_repeat" id="pwd_repeat">
+					</label>				
+					
+					<input class="button expanded" type="submit" value="Sign Up!"/>
+					<a class="button expanded" href="{{ url('index') }}">Back</a>
+					
+					<pre>Inquiries or errors: dgil[ at ]uef[ dot ]fi</pre>
+				
+				</div>
+			
+				</form>
+			
+			</div>
+		</div>
+
+		<script>
+		
+		$(document).foundation();
+
+		</script>
+	
+	</body>
+	
+</html>

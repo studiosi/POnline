@@ -1,0 +1,65 @@
+<html>
+
+	<head>
+
+		<title>PUPILS: THE GAME | ADMIN LOGIN</title>
+		
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/foundation/6.2.1/foundation.min.css">
+		<link rel="stylesheet" href="/css/style.css">
+		
+		<meta charset="utf-8" /> 
+		
+		<script src="https://code.jquery.com/jquery-1.12.3.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/foundation/6.2.1/foundation.min.js"></script>
+
+	</head>
+
+	<body>
+	
+		<div class="row">
+			<div class="medium-6 medium-centered large-6 large-centered columns">
+			
+			<form action="{{ url('login_check') }}" method="post">
+			
+				<div class="log-in-form">
+				
+				<h4 class="text-center">ADMIN LOGIN</h4>
+				
+				{% if error %}
+				
+				<div class="alert callout">
+					<strong>ERROR:&nbsp;</strong><span>{{ error }}</span>
+				</div>					
+		
+				{% endif %}
+				
+				<label for="username">Username
+					<input type="text" id="username" name="_username" value="" />
+				</label>
+				
+				<label for="password">Password
+					<input type="password" id="password" name="_password" value="" />
+				</label>
+				
+				<input class="button expanded" type="submit" value="Login"/>
+				<a class="button expanded" href="{{ url('index') }}">Back</a>
+				
+				<pre>Inquiries or errors: dgil[ at ]uef[ dot ]fi</pre>
+				
+				</div>
+			
+			</form>
+			
+			</div>
+			
+		</div>
+
+		<script>
+		
+		$(document).foundation();
+		
+		</script>
+		
+	</body>
+
+</html>

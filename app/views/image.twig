@@ -1,0 +1,88 @@
+<html>
+
+	<head>
+
+		<title>PUPILS: THE GAME | DETECT!</title>
+		
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/foundation/6.2.1/foundation.min.css">
+		<link rel="stylesheet" href="/css/style.css">
+		
+		<meta charset="utf-8" /> 
+		
+		<script src="https://code.jquery.com/jquery-1.12.3.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/foundation/6.2.1/foundation.min.js"></script>
+
+	</head>
+
+	<body>
+	
+		<div class="top-bar">
+		
+		<div class="top-bar-left">
+		
+			<ul class="dropdown menu">
+				
+				<li class="menu-text">Logged in as: {{ user.username }}</li>
+				<li class="menu-text">Points in this session: {{ nclicks }}</li>
+			
+			</ul>
+		
+		</div>
+		
+		<div class="top-bar-right">
+			<ul class="menu">
+				<li><a class="button"# href="{{ url('exit') }}">Logout</a></li>
+			</ul>
+		</div>
+		
+		</div>
+		
+		<div class="margin-top">
+		<canvas class="canvas-centered" id="eye">YOUR BROWSER SUCKS AND THIS WON'T WORK. UPDATE NOW!</canvas>
+		</div>
+		
+		<script>
+
+			var cnv = document.getElementById('eye');
+			var ctx = cnv.getContext('2d');
+
+			var imageObj = new Image();
+			imageObj.onload = function() {
+
+				ctx.canvas.width = this.width;
+				ctx.canvas.height = this.height;								
+				ctx.drawImage(imageObj, 0, 0);
+
+			}
+			imageObj.src = "/img/{{ image.filename }}";
+
+			cnv.addEventListener("mousedown", doClick, false);
+
+			function doClick(event) {
+
+				var t = '{{ token }}';					
+				
+				var x = event.offsetX?(event.offsetX):event.pageX-document.getElementById("eye").offsetLeft;
+				var y = event.offsetY?(event.offsetY):event.pageY-document.getElementById("eye").offsetTop;	
+
+				$.ajax({
+
+					url:"{{ url('image') }}",
+					type:"POST",
+					success:function(data) {
+						var d = JSON.parse(data);
+						if(d.msg === "ERR") {
+							alert("Not accurate enough! Keep on going, please!");
+						}
+						window.location.href = "{{ url('image') }}";
+					},
+					data:{"t":t,"x":x,"y":y}
+				});
+				
+			}
+
+		</script>
+		
+	</body>
+	
+</html>
