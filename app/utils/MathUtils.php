@@ -5,7 +5,7 @@
 	class MathUtils {
 		
 		private static $POINTS_PER_IMAGE = 1000;
-		private static $MAX_ACCEPTABLE_STD_DEVS = 3;
+		private static $MAX_ACCEPTABLE_STD_DEVS = 2;
 		
 		public static function calculateCurrentPercentage($clicks, $n_images) {
 			
