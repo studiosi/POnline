@@ -5,6 +5,10 @@ img.smaller {
 	
 }
 
+.fb_iframe_widget {
+    vertical-align: top !important;
+}
+
 .centered {
 	
 	display: block;
