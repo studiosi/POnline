@@ -13,6 +13,8 @@
 			'BANNED' => 'BAN'
 		);
 		
+		public static $N_LEADERBOARD = 10;
+		
 		public static $SESSION_PLAYER_ID = 'SESSION_PLAYER';
 		
 		public function existsUsername(Application $app, $username) {
@@ -110,7 +112,7 @@
 				$qb->expr()->eq('status', '\'' . PlayerDAO::$STATUS['OPERATIONAL'] . '\'')
 			)
 			->orderBy('N', 'DESC')
-			->setMaxResults(3);
+			->setMaxResults(PlayerDAO::$N_LEADERBOARD);
 			
 			return $app['db']->fetchAll($qb->getSQL());
 			
@@ -139,6 +141,36 @@
 			);
 			
 			return $app['db']->fetchAssoc($qb->getSQL());
+			
+		}
+		
+		public function getLeaderNClicks(Application $app) {
+			
+			$qb = $app['db']->createQueryBuilder($app);
+			
+			$qb->select('N')
+			->from('leaderboard', 'l')
+			->where(
+				$qb->expr()->eq('status', '\'' . PlayerDAO::$STATUS['OPERATIONAL'] . '\'')
+			)
+			->orderBy('N', 'desc')
+			->setMaxResults(1);
+			
+			return $app['db']->fetchColumn($qb->getSQL(), array(), 0);
+			
+		}
+		
+		public function getNClicksByID(Application $app, $user_id) {
+			
+			$qb = $app['db']->createQueryBuilder($app);
+				
+			$qb->select('N')
+			->from('leaderboard', 'l')
+			->where(
+				$qb->expr()->eq('id_player', $user_id)
+			);
+
+			return $app['db']->fetchColumn($qb->getSQL(), array(), 0);
 			
 		}
 		

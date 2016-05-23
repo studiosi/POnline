@@ -33,6 +33,11 @@
 				$app['session']->set($this->NUMBER_CLICKS_SESSION, 0);
 				
 			}
+			
+			$user = $app['session']->get(PlayerDAO::$SESSION_PLAYER_ID);
+			
+			$nClicksLeader = $pDAO->getLeaderNClicks($app);
+			$nClicks = $pDAO->getNClicksByID($app, $user['id']);
 
 			$imDAO = new ImageDAO();
 			
@@ -50,7 +55,8 @@
 				array(
 					'image' => $image,
 					'token' => $token,
-					'user' => $app['session']->get(PlayerDAO::$SESSION_PLAYER_ID),
+					'user' => $user,
+					'clicksLeft' => $nClicksLeader - $nClicks,
 					'nclicks' => $app['session']->get($this->NUMBER_CLICKS_SESSION)
 				));
 
