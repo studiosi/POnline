@@ -25,10 +25,10 @@
 				<li class="menu-text">Logged in as: {{ user.username }}</li>
 				<li class="menu-text">Points in this session: {{ nclicks }}</li>
 				
-				{% if clicksLeft == 0 %}
+				{% if clicksLeft <= 0 %}
 				<li class="menu-text">You are the leader!</li>
 				{% else %}
-				<li class="menu-text">Clicks left to catch the leader: {{ clicksLeft }}</li>
+				<li class="menu-text">Clicks left to go up one position: {{ clicksLeft }}</li>
 				{% endif %}
 			
 			</ul>

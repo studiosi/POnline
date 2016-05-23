@@ -160,6 +160,24 @@
 			
 		}
 		
+		public function getNextNClicks(Application $app, $id_player, $n_clicks) {
+			
+			$qb = $app['db']->createQueryBuilder($app);
+				
+			$qb->select('N')
+			->from('leaderboard', 'l')
+			->andWhere(				
+				$qb->expr()->eq('status', '\'' . PlayerDAO::$STATUS['OPERATIONAL'] . '\''),	
+				$qb->expr()->gt('N', $n_clicks),
+				$qb->expr()->neq('id_player', $id_player)
+			)
+			->orderBy('N', 'asc')
+			->setMaxResults(1);
+						
+			return $app['db']->fetchColumn($qb->getSQL(), array(), 0);
+			
+		}
+		
 		public function getNClicksByID(Application $app, $user_id) {
 			
 			$qb = $app['db']->createQueryBuilder($app);
