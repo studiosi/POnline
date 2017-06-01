@@ -150,7 +150,7 @@ class Equation {
 			if (Math.abs($this->b) > 1e-9) Equation::convertToReducedEquation();
 			$num = -4*$this->f*$this->a*$this->c + $this->c*$this->d*$this->d + $this->a*$this->e*$this->e;
 			return [Math.sqrt(num/(4*$this->a*$this->c*$this->c)),
-					Math.sqrt(num/(4*$this->a*$this->a*$this->c))];
+					Math.sqrt($num/(4*$this->a*$this->a*$this->c))];
 		}
 		
     public static function getCenter() {
