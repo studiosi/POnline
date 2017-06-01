@@ -7,6 +7,8 @@
  */
 
 namespace TU\Utils;
+    use TU\Utils\Equation;
+    use TU\controllers\ImageController;
 
 /**
  * Description of Equation
@@ -80,23 +82,25 @@ class Equation {
 					  [0, -1, 0],
 				 	  [.5, 0, 0]];
 
-			$u = multiply($iS3, $S2T);
-			$u = scale($u, -1);
-			$a = multiply($ic, $add($S1, Ellipse::multiply($S2, $u)));
+			$u = Ellipse::multiply($iS3, $S2T);
+			$u = Ellipse::scale($u, -1);
+			$a = Ellipse::multiply($ic, Ellipse::add($S1, Ellipse::multiply($S2, $u)));
 			
-			 $eigVal = Ellipse::eigenvalues($a);
-			
-			//eigenvectors
-			 $eigVec = $eigVal.map(function($l) {
-				$ev = Ellipse::nullspace($add($a, [[-$l, 0, 0],[0, -$l, 0],[0, 0, -$l]]));
+			$eigVal = Ellipse::eigenvalues($a);
+                        
+			$eigfunc = array(Equation::eigenvectors($S1,$a));
+			//eigenvectors - original commented below
+                        $eigVec = $eigVal.array_map($S1, $eigfunc);
+			/*$eigVec = $eigVal.array_map(function($Sl) {
+				$ev = Ellipse::nullspace(Ellipse::add($a, [[-$l, 0, 0],[0, -$l, 0],[0, 0, -$l]]));
 				//return {$ev: $ev, $cond: 4*$ev[2]*$ev[0] - $ev[1]*$ev[1]};
                                 $cond = 4*$ev[2]*$ev[0] - $ev[1]*$ev[1];
                                 return array($ev, $cond);
                                 
-                         });
+                         }); */
 			
 			//condition
-			 $a1 = $eigVec.filter(function($e) {
+			 $a1 = $eigVec.array_filter(function($e) {
 				return $e.cond > 0;
 			}).array_reduce(function($p,$c) {
 				return $p.cond < $c.cond ? $p : $c;
@@ -112,9 +116,9 @@ class Equation {
 				$this->f = $u[2][0]*$ev[0] + $u[2][1]*$ev[1] + $u[2][2]*$ev[2];
 			} else {
                                 $a1len = $a1.length;
-                                console.warn($p . $this->b . " with" . $eigenvectors . $length . "=" . $a1len);
+                                ImageController::debug_to_console($p . $b . " with" . $eigenvectors . $length . "=" . $a1len);
 				//console.warn("$p$b with $eigenvectors, $length = " + $a1.length);
-				console.warn($eigVec);
+				ImageController::debug_to_console($eigVec);
 			}
 		}
 
@@ -159,6 +163,24 @@ class Equation {
 			return [(2*$this->c*$this->d - $this->b*$this->e)/$denom,
 					(2*$this->a*$this->e - $this->d*$this->b)/$denom];
 		}
+                
+    public static function eigenvectors($S1, $a) {
+                        $ev = Ellipse::nullspace(Ellipse::add($a, [[-1, 0, 0],[0, -1, 0],[0, 0, -1]]));
+				//return {$ev: $ev, $cond: 4*$ev[2]*$ev[0] - $ev[1]*$ev[1]};
+                        $cond = 4*$ev[2]*$ev[0] - $ev[1]*$ev[1];
+                        
+                        
+                        return array($ev, $cond);
+                            
+    }
+                         
+			/*$eigVec = $eigVal.array_map(function($Sl) {
+				$ev = Ellipse::nullspace(Ellipse::add($a, [[-$l, 0, 0],[0, -$l, 0],[0, 0, -$l]]));
+				//return {$ev: $ev, $cond: 4*$ev[2]*$ev[0] - $ev[1]*$ev[1]};
+                                $cond = 4*$ev[2]*$ev[0] - $ev[1]*$ev[1];
+                                
+                                
+                         }); */
 	}
 	//return $my;
 
