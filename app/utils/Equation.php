@@ -50,20 +50,20 @@ class Equation {
 	
     public static function setfrompoints($u){
 			//compute sums
-			$Sxxxx = $u.array_reduce(function($p, $c) { return $p + $c.$x * $c.$x * $c.$x * $c.$x; }, 0);
-			$Sxxxy = $u.array_reduce(function($p, $c) { return $p + $c.$x * $c.$x * $c.$x * $c.$y; }, 0);
-			$Sxxyy = $u.array_reduce(function($p, $c) { return $p + $c.$x * $c.$x * $c.$y * $c.$y; }, 0);
-			$Sxyyy = $u.array_reduce(function($p, $c) { return $p + $c.$x * $c.$y * $c.$y * $c.$y; }, 0);
-			$Syyyy = $u.array_reduce(function($p, $c) { return $p + $c.$y * $c.$y * $c.$y * $c.$y; }, 0);
-			$Sxxx  = $u.array_reduce(function($p, $c) { return $p + $c.$x * $c.$x * $c.$x;       }, 0);
-			$Sxxy  = $u.array_reduce(function($p, $c) { return $p + $c.$x * $c.$x * $c.$y;       }, 0);
-			$Sxyy  = $u.array_reduce(function($p, $c) { return $p + $c.$x * $c.$y * $c.$y;       }, 0);
-			$Syyy  = $u.array_reduce(function($p, $c) { return $p + $c.$y * $c.$y * $c.$y;       }, 0);
-			$Sxx   = $u.array_reduce(function($p, $c) { return $p + $c.$x * $c.$x;             }, 0);
-			$Sxy   = $u.array_reduce(function($p, $c) { return $p + $c.$x * $c.$y;             }, 0);
-			$Syy   = $u.array_reduce(function($p, $c) { return $p + $c.$y * $c.$y;             }, 0);
-			$Sx    = $u.array_reduce(function($p, $c) { return $p + $c.$x;                   }, 0);
-			$Sy    = $u.array_reduce(function($p, $c) { return $p + $c.$y;                   }, 0);
+			$Sxxxx = array_reduce($u,function($p, $c) { return $p + $c['x'] * $c['x'] * $c['x'] * $c['x']; }, 0);
+			$Sxxxy = array_reduce($u,function($p, $c) { return $p + $c['x'] * $c['x'] * $c['x'] * $c['y']; }, 0);
+			$Sxxyy = array_reduce($u,function($p, $c) { return $p + $c['x'] * $c['x'] * $c['y'] * $c['y']; }, 0);
+			$Sxyyy = array_reduce($u,function($p, $c) { return $p + $c['x'] * $c['y'] * $c['y'] * $c['y']; }, 0);
+			$Syyyy = array_reduce($u,function($p, $c) { return $p + $c['y'] * $c['y'] * $c['y'] * $c['y']; }, 0);
+			$Sxxx  = array_reduce($u,function($p, $c) { return $p + $c['x'] * $c['x'] * $c['x'];       }, 0);
+			$Sxxy  = array_reduce($u,function($p, $c) { return $p + $c['x'] * $c['x'] * $c['y'];       }, 0);
+			$Sxyy  = array_reduce($u,function($p, $c) { return $p + $c['x'] * $c['y'] * $c['y'];       }, 0);
+			$Syyy  = array_reduce($u,function($p, $c) { return $p + $c['y'] * $c['y'] * $c['y'];       }, 0);
+			$Sxx   = array_reduce($u,function($p, $c) { return $p + $c['x'] * $c['x'];             }, 0);
+			$Sxy   = array_reduce($u,function($p, $c) { return $p + $c['x'] * $c['y'];             }, 0);
+			$Syy   = array_reduce($u,function($p, $c) { return $p + $c['y'] * $c['y'];             }, 0);
+			$Sx    = array_reduce($u,function($p, $c) { return $p + $c['x'];                   }, 0);
+			$Sy    = array_reduce($u,function($p, $c) { return $p + $c['y'];                   }, 0);
 			
 			
 			//$construct martrices
@@ -75,39 +75,58 @@ class Equation {
  					  [$Sxyy, $Syyy, $Syy]];
 			$S3 = [[$Sxx, $Sxy, $Sx],
 					  [$Sxy, $Syy, $Sy],
-  					  [$Sx, $Sy, $u.length]];
+  					  [$Sx, $Sy, count($u)]];
 			$S2T =  Ellipse::transpose($S2);
 			$iS3 =  Ellipse::inverse($S3);
 			$ic = [[0, 0, .5],
 					  [0, -1, 0],
 				 	  [.5, 0, 0]];
-
+                       
 			$u = Ellipse::multiply($iS3, $S2T);
-			$u = Ellipse::scale($u, -1);
-			$a = Ellipse::multiply($ic, Ellipse::add($S1, Ellipse::multiply($S2, $u)));
+			$U = Ellipse::scale($U, -1);
+			$A = Ellipse::multiply($ic, Ellipse::add($S1, Ellipse::multiply($S2, $U)));
 			
-			$eigVal = Ellipse::eigenvalues($a);
+			$eigVal = Ellipse::eigenvalues($A);
                         
-			$eigfunc = array(Equation::eigenvectors($S1,$a));
 			//eigenvectors - original commented below
-                        $eigVec = $eigVal.array_map($S1, $eigfunc);
+                        $eigVec = array_walk($eigVal,function($l) {
+                            $ev = Ellipse::nullspace(Ellipse::add($A, [[-$l, 0, 0],[0, -$l, 0],[0, 0, -$l]]));
+				return array('ev' => 'ev', 'cond' => 4*$ev[2]*$ev[0] - $ev[1]*$ev[1]);                               
+
+                        });
+                        
+                        
+                        //$eigVec = $eigVal.array_map("eigenMap", $l);
+                        
+                        //$eigVec = $eigVal.array_map($this,array(function($Sl) {
+                        //$eigVec = $eigVal.array_map(array( __CLASS__, 'eigenMap'), $l);
+                        //$ev = Ellipse::nullspace(Ellipse::add($A, [[-$l, 0, 0],[0, -$l, 0],[0, 0, -$l]]));
+                        //return array($ev = $ev, $cond = 4*$ev[2]*$ev[0] - $ev[1]*$ev[1]);
+                            
+                        //}));
 			/*$eigVec = $eigVal.array_map(function($Sl) {
 				$ev = Ellipse::nullspace(Ellipse::add($a, [[-$l, 0, 0],[0, -$l, 0],[0, 0, -$l]]));
 				//return {$ev: $ev, $cond: 4*$ev[2]*$ev[0] - $ev[1]*$ev[1]};
                                 $cond = 4*$ev[2]*$ev[0] - $ev[1]*$ev[1];
                                 return array($ev, $cond);
                                 
-                         }); */
+                         }); 
+
+                          var eigVec = eigVal.map(function(l) {
+				var ev = nullspace(add(A, [[-l, 0, 0],[0, -l, 0],[0, 0, -l]]));
+				return {ev: ev, cond: 4*ev[2]*ev[0] - ev[1]*ev[1]};
+			});
+                                                 */
 			
 			//condition
 			 $a1 = $eigVec.array_filter(function($e) {
-				return $e.cond > 0;
+				return $e['cond'] > 0;
 			}).array_reduce(function($p,$c) {
-				return $p.cond < $c.cond ? $p : $c;
-			}, array($cond = inf, $err = true));
+				return $p['cond'] < $c['cond'] ? $p : $c;   
+			}, array($cond => inf, $err => true));
 
-			if ($a1.$err == undefined) {
-				 $ev = $a1.$ev;
+			if ($a1['err'] == undefined) {
+				 $ev = $a1['ev'];
 				$this->a = $ev[0];
 				$this->b = $ev[1];
 				$this->c = $ev[2];
@@ -115,12 +134,19 @@ class Equation {
 				$this->e = $u[1][0]*$ev[0] + $u[1][1]*$ev[1] + $u[1][2]*$ev[2];
 				$this->f = $u[2][0]*$ev[0] + $u[2][1]*$ev[1] + $u[2][2]*$ev[2];
 			} else {
-                                $a1len = $a1.length;
-                                ImageController::debug_to_console($p . $b . " with" . $eigenvectors . $length . "=" . $a1len);
+                                $a1len = count($a1);
+                                ImageController::debug_to_console($p . /*$b .*/ " with" . $eigenvectors . $length . "=" . $a1len);
 				//console.warn("$p$b with $eigenvectors, $length = " + $a1.length);
-				ImageController::debug_to_console($eigVec);
+				ImageController::debug_to_console($ev[0]);
+                                ImageController::debug_to_console($eigVec);
 			}
 		}
+                
+    public static function eigenMap($l){
+        $ev = Ellipse::nullspace(Ellipse::add($A, array([-$l, 0, 0],[0, -$l, 0],[0, 0, -$l])));
+	return array($ev = $ev, $cond = 4*$ev[2]*$ev[0] - $ev[1]*$ev[1]);
+        
+    }
 
     public static function printEquation() {
 			return printCoeff($this->a) + "x^2 "
@@ -164,8 +190,8 @@ class Equation {
 					(2*$this->a*$this->e - $this->d*$this->b)/$denom];
 		}
                 
-    public static function eigenvectors($S1, $a) {
-                        $ev = Ellipse::nullspace(Ellipse::add($a, [[-1, 0, 0],[0, -1, 0],[0, 0, -1]]));
+    public static function eigenvectors($l, $a) {
+                        $ev = Ellipse::nullspace(Ellipse::add($a, [[-$l, 0, 0],[0, -$l, 0],[0, 0, -$l]]));
 				//return {$ev: $ev, $cond: 4*$ev[2]*$ev[0] - $ev[1]*$ev[1]};
                         $cond = 4*$ev[2]*$ev[0] - $ev[1]*$ev[1];
                         
