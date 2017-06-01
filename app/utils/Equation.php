@@ -100,18 +100,20 @@ class Equation {
 				return $e.cond > 0;
 			}).array_reduce(function($p,$c) {
 				return $p.cond < $c.cond ? $p : $c;
-			}, {$cond:Infinity, err:true});
+			}, array($cond = inf, $err = true));
 
-			if ($a1.err == undefined) {
+			if ($a1.$err == undefined) {
 				 $ev = $a1.$ev;
-				this.$equation.$a = $ev[0];
-				this.$equation.$b = $ev[1];
-				this.$equation.$c = $ev[2];
-				this.$equation.$d = $u[0][0]*$ev[0] + $u[0][1]*$ev[1] + $u[0][2]*$ev[2];
-				this.$equation.$e = $u[1][0]*$ev[0] + $u[1][1]*$ev[1] + $u[1][2]*$ev[2];
-				this.$equation.$f = $u[2][0]*$ev[0] + $u[2][1]*$ev[1] + $u[2][2]*$ev[2];
-			} $else {
-				console.warn("$p$b with $eigenvectors, $length = " + $a1.length);
+				$this->a = $ev[0];
+				$this->b = $ev[1];
+				$this->c = $ev[2];
+				$this->d = $u[0][0]*$ev[0] + $u[0][1]*$ev[1] + $u[0][2]*$ev[2];
+				$this->e = $u[1][0]*$ev[0] + $u[1][1]*$ev[1] + $u[1][2]*$ev[2];
+				$this->f = $u[2][0]*$ev[0] + $u[2][1]*$ev[1] + $u[2][2]*$ev[2];
+			} else {
+                                $a1len = $a1.length;
+                                console.warn($p . $this->b . " with" . $eigenvectors . $length . "=" . $a1len);
+				//console.warn("$p$b with $eigenvectors, $length = " + $a1.length);
 				console.warn($eigVec);
 			}
 		}
