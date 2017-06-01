@@ -65,8 +65,9 @@
 	}
         
         public static function inverse($B) {
-		$d = determinant($B);
-		return [[($B[1][1] * $B[2][2] - $B[1][2] * $B[2][1]) / $d,
+		$d = Ellipse::determinant($B);
+		return [
+                    [($B[1][1] * $B[2][2] - $B[1][2] * $B[2][1]) / $d,
 			($B[0][2] * $B[2][1] - $B[0][1] * $B[2][2]) / $d,
 			($B[0][1] * $B[1][2] - $B[0][2] * $B[1][1]) / $d],
 			[($B[1][2] * $B[2][0] - $B[1][0] * $B[2][2]) / $d,
@@ -74,7 +75,8 @@
 			($B[0][2] * $B[1][0] - $B[0][0] * $B[1][2]) / $d],
                         [($B[1][0] * $B[2][1] - $B[1][1] * $B[2][0]) / $d,
 			($B[0][1] * $B[2][0] - $B[0][0] * $B[2][1]) / $d,
-			($B[0][0] * $B[1][1] - $B[0][1] * $B[1][0]) / $d]];
+			($B[0][0] * $B[1][1] - $B[0][1] * $B[1][0]) / $d]
+                        ];
 	}
         
         public static function multiply($A, $B) {
@@ -110,23 +112,23 @@
 	}
         
         public static function eigenvalues($A) {
-		$q = trace(A) / 3;
-		$K = add($A, [[-$q, 0, 0],[0, -$q, 0],[0, 0, -$q]]);
-		$p = Math.sqrt(trace(multiply($K,$K))/6);
-		$d = determinant(scale($K, 1 / $p));
+		$q = Ellipse::trace($A) / 3;
+		$K = Ellipse::add($A, [[-$q, 0, 0],[0, -$q, 0],[0, 0, -$q]]);
+		$p = sqrt(Ellipse::trace(Ellipse::multiply($K,$K))/6);
+		$d = Ellipse::determinant(Ellipse::scale($K, 1 / $p));
 
 		$phi;
 		if ($d <= -2) {
-			$phi = Math.PI / 3;
+			$phi = PI / 3;
 		} else if ($d >= 2) {
 			$phi = 0;
 		} else {
-			$phi = Math.acos($d / 2) / 3;
+			$phi = acos($d / 2) / 3;
 		}
 		
-		return [$q + 2 * $p * Math.cos($phi),
-		$q + 2 * $p * Math.cos($phi + (2 * Math.PI / 3)),
-		$q + 2 * $p * Math.cos($phi + (4 * Math.PI / 3))];
+		return [$q + 2 * $p * cos($phi),
+		$q + 2 * $p * cos($phi + (2 * pi() / 3)),
+		$q + 2 * $p * cos($phi + (4 * pi() / 3))];
 	}
         
         public static function nullspace($G) {
@@ -135,7 +137,7 @@
 
 		$y = -($G[1][0]+$G[1][2]*$k1)/($G[1][1]+$G[1][2]*$k2);
 		$z = $k1 + $k2*$y;
-		$n = Math.sqrt(1+$y*$y+$z*$z);
+		$n = sqrt(1+$y*$y+$z*$z);
 		
 		return [1/$n, $y/$n, $z/$n];
 	}
