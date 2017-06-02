@@ -101,7 +101,7 @@ class Equation {
 			//eigenvectors - original commented below
                         $eigVec = array_walk($eigVal,function($l) {
                             $ev = Ellipse::nullspace(Ellipse::add($A, [[-$l, 0, 0],[0, -$l, 0],[0, 0, -$l]]));
-				return array('ev' => $ev, 'cond' => 4*$ev[2]*$ev[0] - $ev[1]*$ev[1]);                               
+                            return array('ev' => $ev, 'cond' => 4*$ev[2]*$ev[0] - $ev[1]*$ev[1]);                               
 
                         });
                         
