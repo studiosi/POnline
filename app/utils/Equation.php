@@ -157,11 +157,11 @@ class Equation {
                 
     public static function printEquation() {
 			return Equation::printCoeff($equation['a']) + "x^2 "
-				 + Equation::printCoeff($equation['b']) + "xy "
-				 + Equation::printCoeff($equation['c']) + "y^2 "
-				 + Equation::printCoeff($equation['d']) + "x "
-				 + Equation::printCoeff($equation['e']) + "y "
-				 + Equation::printCoeff($equation['f']) + " = 0";
+				 . Equation::printCoeff($equation['b']) + "xy "
+				 . Equation::printCoeff($equation['c']) + "y^2 "
+				 . Equation::printCoeff($equation['d']) + "x "
+				 . Equation::printCoeff($equation['e']) + "y "
+				 . Equation::printCoeff($equation['f']) + " = 0";
 		}
 		
     public static function convertToReducedEquation() {
