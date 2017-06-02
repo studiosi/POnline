@@ -1,11 +1,11 @@
 <?php
 
-        namespace TU\Utils;
-        use TU\Utils\Equation;
+    namespace TU\Utils;
+    use TU\Utils\Equation;
     use TU\Utils\Ellipse;
     use TU\controllers\ImageController;
 
-        class Ellipse{
+    class Ellipse{
             /*    private static $x;
                 private static $y;
                 private static $majorAxis;
@@ -81,9 +81,10 @@
 		$q = Ellipse::trace($A) / 3;
 		$K = Ellipse::add($A, [[-$q, 0, 0],[0, -$q, 0],[0, 0, -$q]]);
 		$p = sqrt(Ellipse::trace(Ellipse::multiply($K,$K))/6);
-		$d = Ellipse::determinant(Ellipse::scale($K, 1 / $p));
-                $pi = pi();
-		$phi;
+		$d = Ellipse::determinant(Ellipse::scale($K, 1 / $p));  
+                $pi = acos(-1);
+                // pi() or acos(-1) for getting the value of pi
+		$phi;                        // SO FAR WORKS
 		if ($d <= -2) {
 			$phi = $pi / 3;
 		} else if ($d >= 2) {
@@ -91,7 +92,8 @@
 		} else {
 			$phi = acos($d / 2) / 3;
 		}
-		
+                // PHI IS VALUE OF NAN
+		ImageController::debug_to_console("ellipse debug: " . $phi . acos(-1));
 		return [$q + 2 * $p * cos($phi),
 		$q + 2 * $p * cos($phi + (2 * $pi / 3)),
 		$q + 2 * $p * cos($phi + (4 * $pi / 3))];
