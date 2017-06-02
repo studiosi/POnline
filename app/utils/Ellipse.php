@@ -1,6 +1,9 @@
 <?php
 
         namespace TU\Utils;
+        use TU\Utils\Equation;
+    use TU\Utils\Ellipse;
+    use TU\controllers\ImageController;
 
         class Ellipse{
             /*    private static $x;
@@ -15,44 +18,7 @@
             */
     
 
-            /* 
-            public static function fitEllipseRANSAC($points, $count){
-                $ellipse = new Ellipse;
-                $count=0;
-                $index[5];
-                $match=false;
-                for($i=0; $i<5; $i++){
-                    do {
-                        $match = false;
-                        $index[$i]=rand()%$points.size();
-                        for ($j=0; $j<$i;$j++){
-                            if($index[$i] == $index[$j]){
-                                $match = true;
-                            }
-                        }
-                    } 
-                    while($match);
-                }
-      
-                
-                $aData = new Matrix([
-                    $points[$index[0]].$x * $points[$index[0]].$x, 2 * $points[$index[0]].$x * $points[$index[0]].$y, $points[$index[0]].
-                    $y * $points[$index[0]].$y, 2 * $points[$index[0]].$x, 2 * $points[$index[0]].$y,
 
-                    points[index[1]].x * points[index[1]].x, 2 * points[index[1]].x * points[index[1]].y, points[index[1]].
-                    y * points[index[1]].y, 2 * points[index[1]].x, 2 * points[index[1]].y,
-
-                    points[index[2]].x * points[index[2]].x, 2 * points[index[2]].x * points[index[2]].y, points[index[2]].
-                    y * points[index[2]].y, 2 * points[index[2]].x, 2 * points[index[2]].y,
-
-                    points[index[3]].x * points[index[3]].x, 2 * points[index[3]].x * points[index[3]].y, points[index[3]].
-                    y * points[index[3]].y, 2 * points[index[3]].x, 2 * points[index[3]].y,
-
-                    points[index[4]].x * points[index[4]].x, 2 * points[index[4]].x * points[index[4]].y, points[index[4]].
-                    y * points[index[4]].y, 2 * points[index[4]].x, 2 * points[index[4]].y 
-                ]);
-                
-            } */
             
             // 3x3 matrix helpers
 	public static function determinant($B) {
@@ -116,10 +82,10 @@
 		$K = Ellipse::add($A, [[-$q, 0, 0],[0, -$q, 0],[0, 0, -$q]]);
 		$p = sqrt(Ellipse::trace(Ellipse::multiply($K,$K))/6);
 		$d = Ellipse::determinant(Ellipse::scale($K, 1 / $p));
-
+                $pi = pi();
 		$phi;
 		if ($d <= -2) {
-			$phi = PI / 3;
+			$phi = $pi / 3;
 		} else if ($d >= 2) {
 			$phi = 0;
 		} else {
@@ -127,8 +93,8 @@
 		}
 		
 		return [$q + 2 * $p * cos($phi),
-		$q + 2 * $p * cos($phi + (2 * pi() / 3)),
-		$q + 2 * $p * cos($phi + (4 * pi() / 3))];
+		$q + 2 * $p * cos($phi + (2 * $pi / 3)),
+		$q + 2 * $p * cos($phi + (4 * $pi / 3))];
 	}
         
         public static function nullspace($G) {
