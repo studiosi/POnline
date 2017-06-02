@@ -105,6 +105,12 @@ class Equation {
 
                         });
                         
+                        /* eigenvectors as in javascript source
+			var eigVec = eigVal.map(function(l) {
+				var ev = nullspace(add(A, [[-l, 0, 0],[0, -l, 0],[0, 0, -l]]));
+				return {ev: ev, cond: 4*ev[2]*ev[0] - ev[1]*ev[1]};
+			}); */
+                        
                        
 			//condition
                         $a1filter = array_filter($eigVec,function($e) {
