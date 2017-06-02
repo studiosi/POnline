@@ -187,7 +187,7 @@ class Equation {
 			if (abs($equation['b']) > 1e-9) Equation::convertToReducedEquation();
 			$num = -4*$equation['f']*$equation['a']*$equation['c'] + $equation['c']*$equation['d']*$equation['d'] + $equation['a']*$equation['e']*$equation['e'];
 			return [sqrt(num/(4*$equation['a']*$equation['c']*$equation['c'])),
-					sqrt($num/(4*$this->a*$this->a*$this->c))];
+					sqrt($num/(4*$$equation['a']*$equation['a']*$equation['c']))];
 		}
 		
     public static function getCenter() {
