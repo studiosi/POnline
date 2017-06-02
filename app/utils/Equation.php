@@ -145,7 +145,7 @@ class Equation {
 				$equation['f'] = $u[2][0]*$ev[0] + $u[2][1]*$ev[1] + $u[2][2]*$ev[2];
 			} else {
                                 $a1len = count($a1);
-                                ImageController::debug_to_console("Pb with eigenvectors, length = " + count($a1));
+                                ImageController::debug_to_console("Pb with eigenvectors, length = " . count($a1));
                                 ImageController::debug_to_console($eigVec);
                                 
 			}
