@@ -84,8 +84,8 @@ class Equation {
 			$S2T =  Ellipse::transpose($S2);
 			$iS3 =  Ellipse::inverse($S3);
 			$ic = [[0, 0, .5],
-					  [0, -1, 0],
-				 	  [.5, 0, 0]];
+			    [0, -1, 0],
+			    [.5, 0, 0]];
                        
                         
                         
@@ -105,28 +105,7 @@ class Equation {
 
                         });
                         
-                        //$eigVec = $eigVal.array_map("eigenMap", $l);
-                        
-                        //$eigVec = $eigVal.array_map($this,array(function($Sl) {
-                        //$eigVec = $eigVal.array_map(array( __CLASS__, 'eigenMap'), $l);
-                        //$ev = Ellipse::nullspace(Ellipse::add($A, [[-$l, 0, 0],[0, -$l, 0],[0, 0, -$l]]));
-                        //return array($ev = $ev, $cond = 4*$ev[2]*$ev[0] - $ev[1]*$ev[1]);
-                            
-                        //}));
-			/*$eigVec = $eigVal.array_map(function($Sl) {
-				$ev = Ellipse::nullspace(Ellipse::add($a, [[-$l, 0, 0],[0, -$l, 0],[0, 0, -$l]]));
-				//return {$ev: $ev, $cond: 4*$ev[2]*$ev[0] - $ev[1]*$ev[1]};
-                                $cond = 4*$ev[2]*$ev[0] - $ev[1]*$ev[1];
-                                return array($ev, $cond);
-                                
-                         }); 
-
-                          var eigVec = eigVal.map(function(l) {
-				var ev = nullspace(add(A, [[-l, 0, 0],[0, -l, 0],[0, 0, -l]]));
-				return {ev: ev, cond: 4*ev[2]*ev[0] - ev[1]*ev[1]};
-			});
-                                                 */
-			Equation::printEquation();
+                       
 			//condition
                         $a1filter = array_filter($eigVec,function($e) {
                         return $e['cond'] > 0;});
