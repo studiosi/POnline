@@ -113,6 +113,7 @@ class Equation {
                         
                        
 			//condition
+                        // FIX THIS
                         $a1filter = array_filter($eigVec,function($e) {
                         return $e['cond'] > 0;});
                         
