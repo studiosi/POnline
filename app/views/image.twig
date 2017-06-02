@@ -30,6 +30,8 @@
 				{% else %}
 				<li class="menu-text">Clicks left to go up one position: {{ clicksLeft }}</li>
 				{% endif %}
+                                
+                                
 			
 			</ul>
 		
@@ -37,21 +39,29 @@
 		
 		<div class="top-bar-right">
 			<ul class="menu">
-				<li><a class="button"# href="{{ url('exit') }}">Logout</a></li>
+                            <li class="menu-text"> Click at least four times on the edge of pupil</li>
+                            <li  class="menu-text">Click count:</li>
+                            <li  class="menu-text" id="clicks">0</li>
+                            <li><a style="margin-right: 3px; visibility: hidden" id="next-button" class="button"# href="{{ url('image') }}">Next Picture</a></li>
+                            <li><a class="button"# href="{{ url('exit') }}">Logout</a></li>
 			</ul>
 		</div>
 		
 		</div>
 		
 		<div class="margin-top">
-		<canvas class="canvas-centered" id="eye">YOUR BROWSER SUCKS AND THIS WON'T WORK. UPDATE NOW!</canvas>
+                    <canvas class="canvas-centered" id="eye">YOUR BROWSER SUCKS AND THIS WON'T WORK. UPDATE NOW!</canvas>
 		</div>
+                
+                <div class ="bottom-bar">
+                </div>
 		
 		<script>
 
 			var cnv = document.getElementById('eye');
 			var ctx = cnv.getContext('2d');
-
+                        var clickcount = 0;
+                        
 			var imageObj = new Image();
 			imageObj.onload = function() {
 
@@ -67,10 +77,15 @@
 			function doClick(event) {
 
 				var t = '{{ token }}';					
-				
+				clickcount++;
+                                
+                                if (clickcount == 4) {
+                                    document.getElementById('next-button').style.visibility="visible";
+                                }
+                                
 				var x = event.offsetX?(event.offsetX):event.pageX-document.getElementById("eye").offsetLeft;
 				var y = event.offsetY?(event.offsetY):event.pageY-document.getElementById("eye").offsetTop;	
-
+                                document.getElementById("clicks").innerHTML = clickcount;    
 				$.ajax({
 
 					url:"{{ url('image') }}",
@@ -80,12 +95,14 @@
 						if(d.msg === "ERR") {
 							alert("Not accurate enough! Keep on going, please!");
 						}
-						window.location.href = "{{ url('image') }}";
+						//window.location.href = "{{ url('image') }}";
 					},
 					data:{"t":t,"x":x,"y":y}
 				});
 				
 			}
+                        
+                        
 
 		</script>
 		
