@@ -8,6 +8,8 @@
 	use SecurityLib;
 	use Symfony\Component\HttpFoundation\Request;
 	use TU\Utils\MathUtils;
+        use TU\Utils\Equation;
+        use TU\Utils\Ellipse;
 	use TU\DAO\PlayerDAO;
 	use TU\Utils\FormatUtils;
 				
@@ -96,7 +98,8 @@
 				
 				$distance = MathUtils::calculateDistance($centroid, $newPoint);
 				
-				if (MathUtils::isAcceptablePoint($pointList, $centroid, $newPoint, $distance)) {					
+                                // Acceptable point algorithm commented out
+				// if (MathUtils::isAcceptablePoint($pointList, $centroid, $newPoint, $distance)) {					
 					
 					$image = $imDAO->insertPoint($app, $id, $newPoint, $user['id'], $distance, true);
 					
@@ -104,12 +107,14 @@
 					$n_clicks_session += 1;
 					$n_clicks_session = $app['session']->set($this->NUMBER_CLICKS_SESSION, $n_clicks_session);
 				
+                                        /*
 				}
 				else {
 					
 					return json_encode(array('msg' => 'ERR'));
 					
 				}
+                                */
 				
 				return json_encode(array('msg' => ''));
 				
@@ -137,18 +142,37 @@
 		public function showPoints(Application $app, $id) {
 			
 			$imDAO = new ImageDAO();
-			
+			$Rmax = 0; 
+                        $Rmin = PHP_INT_MAX;
+                        
 			$image = $imDAO->getImageById($app, $id);
 			$points = $imDAO->getAllClicksImage($app, $id);
 			
 			$centroid = MathUtils::calculateCentroid($points);		
 			
 			if(is_null($centroid)) {
-				
 				$centroid = array();
-				
 			}
-			
+                        
+			/*
+                        foreach ($points as $point) {
+                            $dist = MathUtils::calculateDistance($point, $centroid);
+                            if ($dist > $Rmax) {
+                                $Rmax = $dist;
+                            }
+                            
+                            if ($dist < $Rmin) {
+                                $Rmin = $dist;
+                            }
+                        }
+                        */
+                        //$a = MathUtils::calculateSemiMajorAxis($Rmax, $Rmin);
+                        //$b = MathUtils::calculateSemiMinorAxis($Rmax, $Rmin);
+                        
+                        //$eccentricity = MathUtils::calculateEccentricity($a, $b);
+                        Equation::setfrompoints($points);
+                        
+                        
 			$pointList = FormatUtils::getJavascriptSerializedPoints($points);
 			$cent = FormatUtils::getJavascriptSerializedPoints(array($centroid), true);
 			
@@ -192,5 +216,14 @@
 			));
 			
 		}
+                
+                // Console debuffing
+                function debug_to_console( $data ) {
+                    $output = $data;
+                    if ( is_array( $output ) )
+                        $output = implode( ',', $output);
+
+                    echo "<script>console.log( 'Debug Objects: " . $output . "' );</script>";
+                }
 		
 	}
