@@ -83,27 +83,28 @@ class Equation {
   					  [$Sx, $Sy, count($u)]];
 			$S2T =  Ellipse::transpose($S2);
 			$iS3 =  Ellipse::inverse($S3);
-			$ic = [[0, 0, .5],
+			$ic = [[0, 0, 0.5],
 			    [0, -1, 0],
-			    [.5, 0, 0]];
+			    [0.5, 0, 0]];
                        
                         
                         
 			$U = Ellipse::multiply($iS3, $S2T); 
 			$U = Ellipse::scale($U, -1);
-			$A = Ellipse::multiply($ic, Ellipse::add($S1, Ellipse::multiply($S2, $U))); // so far so good
+			$A = Ellipse::multiply($ic, Ellipse::add($S1, Ellipse::multiply($S2, $U)));
                         
-                        
-                        
+                        var_dump($U);
+                        var_dump($A);
 			$eigVal = Ellipse::eigenvalues($A);
-                        
+                        //$eigVal = Lapack::eigenValues($A);
+                        var_dump($eigVal);
 			//eigenvectors - original commented below
                         $eigVec = array_map(function($l) {
                             $ev = Ellipse::nullspace(Ellipse::add($A, [[-$l, 0, 0],[0, -$l, 0],[0, 0, -$l]]));
                             return array('ev' => $ev, 'cond' => 4*$ev[2]*$ev[0] - $ev[1]*$ev[1]);                           
 
                         }, $eigVal);
-                        //var_dump($eigVec);
+                        var_dump($eigVec);
                         
                        
 			//condition
@@ -126,6 +127,7 @@ class Equation {
                                 
                                 $equationstring = Equation::printEquation();
                                 ImageController::debug_to_console($equationstring);
+                                var_dump($equation);
 			/* } else {
                                 $a1len = count($a1);
                                 ImageController::debug_to_console("Pb with eigenvectors, length = " . count($a1));
