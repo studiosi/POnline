@@ -82,21 +82,20 @@
 		$K = Ellipse::add($A, [[-$q, 0, 0],[0, -$q, 0],[0, 0, -$q]]);
 		$p = sqrt(Ellipse::trace(Ellipse::multiply($K,$K))/6);
 		$d = Ellipse::determinant(Ellipse::scale($K, 1 / $p));  
-                $pi = acos(-1);
-                // pi() or acos(-1) for getting the value of pi
+                $pi = M_PI;
+                // pi(), M_PI or acos(-1) for getting the value of pi
 		$phi;                        // SO FAR WORKS
 		if ($d <= -2) {
-			$phi = $pi / 3;
+			$phi = M_PI / 3;
 		} else if ($d >= 2) {
 			$phi = 0;
 		} else {
 			$phi = acos($d / 2) / 3;
 		}
-                // PHI IS VALUE OF NAN
-		ImageController::debug_to_console("ellipse debug: " . $phi . acos(-1));
+                // PHI IS VALUE OF NAN IN SOME CASES, FIX
 		return [$q + 2 * $p * cos($phi),
-		$q + 2 * $p * cos($phi + (2 * $pi / 3)),
-		$q + 2 * $p * cos($phi + (4 * $pi / 3))];
+		$q + 2 * $p * cos($phi + (2 * M_PI / 3)),
+		$q + 2 * $p * cos($phi + (4 * M_PI / 3))];
 	}
         
         public static function nullspace($G) {
