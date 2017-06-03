@@ -70,10 +70,9 @@ class Equation {
 			$Sy    = array_reduce($u,function($p, $c) { return $p + $c['y'];                   }, 0);
 			
 			
-                        
 			//$construct martrices
-			$S1 = [[$Sxxxx, $Sxxxx, $Sxxyy],
-					  [$Sxxxx, $Sxxyy, $Sxyyy],
+			$S1 = [[$Sxxxx, $Sxxxy, $Sxxyy],
+					  [$Sxxxy, $Sxxyy, $Sxyyy],
 					  [$Sxxyy, $Sxyyy, $Syyyy]];
 			$S2 = [[$Sxxx, $Sxxy, $Sxx],
 					  [$Sxxy, $Sxyy, $Sxy],
@@ -99,6 +98,8 @@ class Equation {
                         //$eigVal = Lapack::eigenValues($A);
                         var_dump($eigVal);
 			//eigenvectors - original commented below
+                        
+                        // FIX THIS
                         $eigVec = array_map(function($l) {
                             $ev = Ellipse::nullspace(Ellipse::add($A, [[-$l, 0, 0],[0, -$l, 0],[0, 0, -$l]]));
                             return array('ev' => $ev, 'cond' => 4*$ev[2]*$ev[0] - $ev[1]*$ev[1]);                           
