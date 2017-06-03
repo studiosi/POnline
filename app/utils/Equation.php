@@ -115,7 +115,7 @@ class Equation {
 			 $a1 = array_reduce($a1filter, function($p,$c) {
 				return $p['cond'] < $c['cond'] ? $p : $c;   
 			}, array(array($cond => INF), array(err => true)));
-                        
+                        var_dump($a1);
 			//if ($a1['err'] == undefined) {
 				$ev = $a1['ev'];
 				$equation['a'] = $ev[0];
