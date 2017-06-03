@@ -18,13 +18,13 @@ namespace TU\Utils;
  */
 class Equation {
     private static $equation = array(
-        array('a' => 0),
-        array('b' => 0),
-        array('c' => 0),
-        array('d' => 0),
-        array('e' => 0),
-        array('f' => 0),
-        array('angle' => 0)
+        'a' => 0,
+        'b' => 0,
+        'c' => 0,
+        'd' => 0,
+        'e' => 0,
+        'f' => 0,
+        'angle' => 0
     );
 
     
@@ -97,19 +97,13 @@ class Equation {
                         
 			$eigVal = Ellipse::eigenvalues($A);
                         
-                        ImageController::debug_to_console($eigVal);
 			//eigenvectors - original commented below
-                        $eigVec = array_walk($eigVal,function($l) {
+                        $eigVec = array_map(function($l) {
                             $ev = Ellipse::nullspace(Ellipse::add($A, [[-$l, 0, 0],[0, -$l, 0],[0, 0, -$l]]));
-                            return array('ev' => $ev, 'cond' => 4*$ev[2]*$ev[0] - $ev[1]*$ev[1]);                               
+                            return array('ev' => $ev, 'cond' => 4*$ev[2]*$ev[0] - $ev[1]*$ev[1]);                           
 
-                        });
-                        
-                        /* eigenvectors as in javascript source
-			var eigVec = eigVal.map(function(l) {
-				var ev = nullspace(add(A, [[-l, 0, 0],[0, -l, 0],[0, 0, -l]]));
-				return {ev: ev, cond: 4*ev[2]*ev[0] - ev[1]*ev[1]};
-			}); */
+                        }, $eigVal);
+                        //var_dump($eigVec);
                         
                        
 			//condition
@@ -119,22 +113,26 @@ class Equation {
                         
 			 $a1 = array_reduce($a1filter, function($p,$c) {
 				return $p['cond'] < $c['cond'] ? $p : $c;   
-			}, array($cond => inf, $err => true));
-
-			if ($a1['err'] == undefined) {
-				 $ev = $a1['ev'];
+			}, array(array($cond => INF), array(err => true)));
+                        
+			//if ($a1['err'] == undefined) {
+				$ev = $a1['ev'];
 				$equation['a'] = $ev[0];
 				$equation['b'] = $ev[1];
 				$equation['c'] = $ev[2];
 				$equation['d'] = $u[0][0]*$ev[0] + $u[0][1]*$ev[1] + $u[0][2]*$ev[2];
 				$equation['e'] = $u[1][0]*$ev[0] + $u[1][1]*$ev[1] + $u[1][2]*$ev[2];
 				$equation['f'] = $u[2][0]*$ev[0] + $u[2][1]*$ev[1] + $u[2][2]*$ev[2];
-			} else {
+                                
+                                $equationstring = Equation::printEquation();
+                                ImageController::debug_to_console($equationstring);
+			/* } else {
                                 $a1len = count($a1);
                                 ImageController::debug_to_console("Pb with eigenvectors, length = " . count($a1));
                                 ImageController::debug_to_console($eigVec);
+                                var_dump($eigVec);
                                 
-			}
+			} */
 		}
                 
     public static function printCoeff($x) {
@@ -142,12 +140,12 @@ class Equation {
 		}
                 
     public static function printEquation() {
-			return Equation::printCoeff($equation['a']) + "x^2 "
-				 . Equation::printCoeff($equation['b']) + "xy "
-				 . Equation::printCoeff($equation['c']) + "y^2 "
-				 . Equation::printCoeff($equation['d']) + "x "
-				 . Equation::printCoeff($equation['e']) + "y "
-				 . Equation::printCoeff($equation['f']) + " = 0";
+			return Equation::printCoeff($equation['a']) . "x^2 "
+				 . Equation::printCoeff($equation['b']) . "xy "
+				 . Equation::printCoeff($equation['c']) . "y^2 "
+				 . Equation::printCoeff($equation['d']) . "x "
+				 . Equation::printCoeff($equation['e']) . "y "
+				 . Equation::printCoeff($equation['f']) . " = 0";
 		}
 		
     public static function convertToReducedEquation() {
