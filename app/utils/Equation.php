@@ -82,15 +82,15 @@ class Equation {
   					  [$Sx, $Sy, count($u)]];
 			$S2T =  Ellipse::transpose($S2);
 			$iS3 =  Ellipse::inverse($S3);
-			$ic = [[0, 0, 0.5],
+			$iC = [[0, 0, .5],
 			    [0, -1, 0],
-			    [0.5, 0, 0]];
+			    [.5, 0, 0]];
                        
                         
                         
 			$U = Ellipse::multiply($iS3, $S2T); 
 			$U = Ellipse::scale($U, -1);
-			$A = Ellipse::multiply($ic, Ellipse::add($S1, Ellipse::multiply($S2, $U)));
+			$A = Ellipse::multiply($iC, Ellipse::add($S1, Ellipse::multiply($S2, $U)));
                         
                         var_dump($U);
                         var_dump($A);
@@ -115,7 +115,7 @@ class Equation {
                         
 			 $a1 = array_reduce($a1filter, function($p,$c) {
 				return $p['cond'] < $c['cond'] ? $p : $c;   
-			}, array(array($cond => INF), array(err => true)));
+			}, array('cond' => INF, err => true));
                         var_dump($a1);
 			//if ($a1['err'] == undefined) {
 				$ev = $a1['ev'];
