@@ -10,7 +10,9 @@ namespace TU\Utils;
     use TU\Utils\Equation;
     use TU\Utils\Ellipse;
     use TU\controllers\ImageController;
-
+    //use TU\Utils\Matrix;
+    //use \webd\vectors\Vector;
+    
 /**
  * Description of Equation
  *
@@ -26,7 +28,6 @@ class Equation {
         'f' => 0,
         'angle' => 0
     );
-
     
     
     //$my = function($arg) {
@@ -40,6 +41,7 @@ class Equation {
 			$equation['e'] = $e;
 			$equation['f'] = $f;
 			$equation['angle'] = 0;
+                        
 		}
 		
     public static function setfromReducedequation($a, $c, $d, $e, $f, $angle) {
@@ -85,28 +87,31 @@ class Equation {
 			$iC = [[0, 0, .5],
 			    [0, -1, 0],
 			    [.5, 0, 0]];
-                       
                         
                         
+                        //var_dump($b);
 			$U = Ellipse::multiply($iS3, $S2T); 
 			$U = Ellipse::scale($U, -1);
 			$A = Ellipse::multiply($iC, Ellipse::add($S1, Ellipse::multiply($S2, $U)));
                         
-                        var_dump($U);
+                        Ellipse::setA($A);
                         var_dump($A);
-			$eigVal = Ellipse::eigenvalues($A);
+			$eigVal = Ellipse::eigenvalues($A); // Gives correct values
                         //$eigVal = Lapack::eigenValues($A);
                         var_dump($eigVal);
 			//eigenvectors - original commented below
-                        
-                        // FIX THIS
+                        // FIX THIS $A IS NULL IN FUNCTION
                         $eigVec = array_map(function($l) {
-                            $ev = Ellipse::nullspace(Ellipse::add($A, [[-$l, 0, 0],[0, -$l, 0],[0, 0, -$l]]));
+                            $EA = Ellipse::getA();
+                            $ev = Ellipse::nullspace(Ellipse::add($EA, [[-$l, 0, 0],[0, -$l, 0],[0, 0, -$l]]));
                             return array('ev' => $ev, 'cond' => 4*$ev[2]*$ev[0] - $ev[1]*$ev[1]);                           
 
                         }, $eigVal);
                         var_dump($eigVec);
                         
+                        //$te = new Ellipse();
+                        
+                        Ellipse::setA($A);
                        
 			//condition
                         // FIX THIS
@@ -119,12 +124,12 @@ class Equation {
                         var_dump($a1);
 			//if ($a1['err'] == undefined) {
 				$ev = $a1['ev'];
-				$equation['a'] = $ev[0];
-				$equation['b'] = $ev[1];
-				$equation['c'] = $ev[2];
-				$equation['d'] = $u[0][0]*$ev[0] + $u[0][1]*$ev[1] + $u[0][2]*$ev[2];
-				$equation['e'] = $u[1][0]*$ev[0] + $u[1][1]*$ev[1] + $u[1][2]*$ev[2];
-				$equation['f'] = $u[2][0]*$ev[0] + $u[2][1]*$ev[1] + $u[2][2]*$ev[2];
+				self::$equation['a'] = $ev[0];
+				self::$equation['b'] = $ev[1];
+				self::$equation['c'] = $ev[2];
+				self::$equation['d'] = $U[0][0]*$ev[0] + $U[0][1]*$ev[1] + $U[0][2]*$ev[2];
+				self::$equation['e'] = $U[1][0]*$ev[0] + $U[1][1]*$ev[1] + $U[1][2]*$ev[2];
+				self::$equation['f'] = $U[2][0]*$ev[0] + $U[2][1]*$ev[1] + $U[2][2]*$ev[2];
                                 
                                 $equationstring = Equation::printEquation();
                                 ImageController::debug_to_console($equationstring);
@@ -143,12 +148,12 @@ class Equation {
 		}
                 
     public static function printEquation() {
-			return Equation::printCoeff($equation['a']) . "x^2 "
-				 . Equation::printCoeff($equation['b']) . "xy "
-				 . Equation::printCoeff($equation['c']) . "y^2 "
-				 . Equation::printCoeff($equation['d']) . "x "
-				 . Equation::printCoeff($equation['e']) . "y "
-				 . Equation::printCoeff($equation['f']) . " = 0";
+			return  Equation::printCoeff(self::$equation['a']) . "x^2 "
+				 . Equation::printCoeff(self::$equation['b']) . "xy "
+				 . Equation::printCoeff(self::$equation['c']) . "y^2 "
+				 . Equation::printCoeff(self::$equation['d']) . "x "
+				 . Equation::printCoeff(self::$equation['e']) . "y "
+				 . Equation::printCoeff(self::$equation['f']) . " = 0";
 		}
 		
     public static function convertToReducedEquation() {
