@@ -4,7 +4,7 @@
     use TU\Utils\Equation;
     use TU\Utils\Ellipse;
     use TU\controllers\ImageController;
-
+    
     class Ellipse{
             /*    private static $x;
                 private static $y;
@@ -16,9 +16,15 @@
                 private static $f2_x;
                 private static $f2_y;
             */
+        private static $arrayA=0;
     
-
-
+        public static function setA($A) {
+            self::$arrayA = $A;
+        }
+        
+        public static function getA() {
+            return self::$arrayA;
+        }
             
             // 3x3 matrix helpers
 	public static function determinant($B) {
@@ -69,7 +75,7 @@
 		[$A[2][0] + $B[2][0], $A[2][1] + $B[2][1], $A[2][2] + $B[2][2]]];
 	}
 
-	public static function trace($A) { return $A[0][0] + $A[1][1] + $A[2][2]; }
+	public static function trace($A) { return $A[0][0] + $A[1][1] + $A[2][2]; }  // gives right values
 
 	public static function scale($A, $k) {
 		return [[$k * $A[0][0], $k * $A[0][1], $k * $A[0][2]],
@@ -78,8 +84,9 @@
 	}
         
         public static function eigenvalues($A) {
-		$q = Ellipse::trace($A) / 3;
+		$q = Ellipse::trace($A) / 3;                                   // gives the right value
 		$K = Ellipse::add($A, [[-$q, 0, 0],[0, -$q, 0],[0, 0, -$q]]);
+                // sqrt makes all NAN (when negative numbers are used?)
 		$p = sqrt(Ellipse::trace(Ellipse::multiply($K,$K))/6);
 		$d = Ellipse::determinant(Ellipse::scale($K, 1 / $p));  
                 $pi = M_PI;
@@ -92,6 +99,7 @@
 		} else {
 			$phi = acos($d / 2) / 3;
 		}
+                ImageController::debug_to_console("Ellipse eigenvalues debug: " . $q . " " . $K . " " . $p . " " . $d . " " . $d);
                 // PHI IS VALUE OF NAN IN SOME CASES, FIX
 		return [$q + 2 * $p * cos($phi),
 		$q + 2 * $p * cos($phi + (2 * M_PI / 3)),
