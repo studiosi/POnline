@@ -133,14 +133,18 @@ class Equation {
                                 
                                 $equationstring = Equation::printEquation();
                                 ImageController::debug_to_console($equationstring);
-                                var_dump($equation);
+                                //var_dump(self::$equation);
 			/* } else {
                                 $a1len = count($a1);
                                 ImageController::debug_to_console("Pb with eigenvectors, length = " . count($a1));
                                 ImageController::debug_to_console($eigVec);
                                 var_dump($eigVec);
+                       
                                 
 			} */
+                                
+                        $center = Equation::getCenter();
+                        var_dump($center);
 		}
                 
     public static function printCoeff($x) {
@@ -157,47 +161,39 @@ class Equation {
 		}
 		
     public static function convertToReducedEquation() {
-			$eq = $this->equation;
-			$t = atan($equation['b'] / ($equation['c'] - $equation['a']))/2;
+			$eq = self::$equation;
+			$t = atan(self::$equation['b'] / (self::$equation['c'] - self::$equation['a']))/2;
 			$s = sin(t);
 			$c = cos(t);
-			$old_a = $equation['a'];
-                        $old_b = $equation['b'];
-			$old_c = $equation['c'];
-			$old_d = $equation['d'];
-			$old_e = $equation['e'];
-			$equation['a'] = $old_a*$c*$c - $old_b*$c*$s + $old_c*$s*$s;
-			$equation['c'] = $old_a*$s*$s + $old_b*$c*$s + $old_c*$c*$c;
-			$equation['d'] = $old_d*$c - $old_e*$s;
-			$equation['e'] = $old_d*$s + $old_e*$c;
-			$equation['angle'] = $t;
-			$equation['b'] = 0;
+			$old_a = self::$equation['a'];
+                        $old_b = self::$equation['b'];
+			$old_c = self::$equation['c'];
+			$old_d = self::$equation['d'];
+			$old_e = self::$equation['e'];
+			self::$equation['a'] = $old_a*$c*$c - $old_b*$c*$s + $old_c*$s*$s;
+			self::$equation['c'] = $old_a*$s*$s + $old_b*$c*$s + $old_c*$c*$c;
+			self::$equation['d'] = $old_d*$c - $old_e*$s;
+			self::$equation['e'] = $old_d*$s + $old_e*$c;
+			self::$equation['angle'] = $t;
+			self::$equation['b'] = 0;
 		}
 		
     public static function getAxisLength() {
 			//var eq = this.equation;
-			if (abs($equation['b']) > 1e-9) Equation::convertToReducedEquation();
-			$num = -4*$equation['f']*$equation['a']*$equation['c'] + $equation['c']*$equation['d']*$equation['d'] + $equation['a']*$equation['e']*$equation['e'];
-			return [sqrt(num/(4*$equation['a']*$equation['c']*$equation['c'])),
-					sqrt($num/(4*$$equation['a']*$equation['a']*$equation['c']))];
+			if (abs(self::$equation['b']) > 1e-9) Equation::convertToReducedEquation();
+			$num = -4*self::$equation['f']*self::$equation['a']*self::$equation['c'] + self::$equation['c']*self::$equation['d']*self::$equation['d'] 
+                                + self::$equation['a']*self::$equation['e']*self::$equation['e'];
+			return [sqrt(num/(4*self::$equation['a']*self::$equation['c']*self::$equation['c'])),
+					sqrt($num/(4*self::$equation['a']*self::$equation['a']*self::$equation['c']))];
 		}
 		
     public static function getCenter() {
 			//var eq = this.equation;
-			$denom = $equation['b']*$equation['b'] - 4*$equation['a']*$equation['c'];
-			return [(2*$equation['c']*$equation['d'] - $equation['b']*$equation['e'])/$denom,
-					(2*$$equation['a']*$equation['e'] - $equation['d']*$equation['b'])/$denom];
+			$denom = self::$equation['b']*self::$equation['b'] - 4*self::$equation['a']*self::$equation['c'];
+			return [(2*self::$equation['c']*self::$equation['d'] - self::$equation['b']*self::$equation['e'])/$denom,
+					(2*self::$equation['a']*self::$equation['e'] - self::$equation['d']*self::$equation['b'])/$denom];
 		}
                 
-    public static function eigenvectors($l, $a) {
-                        $ev = Ellipse::nullspace(Ellipse::add($a, [[-$l, 0, 0],[0, -$l, 0],[0, 0, -$l]]));
-				//return {$ev: $ev, $cond: 4*$ev[2]*$ev[0] - $ev[1]*$ev[1]};
-                        $cond = 4*$ev[2]*$ev[0] - $ev[1]*$ev[1];
-                        
-                        
-                        return array($ev, $cond);
-                            
-    }
                          
 		
 }
