@@ -2,7 +2,13 @@
 
 	global $app;
 	
-	
+	// Create Admin
+        
+        $app->get('/create', 'TU\Controllers\AdminController::getSignup')
+		->bind('create');
+	$app->post('/create', 'TU\Controllers\AdminController::postSignup');
+        
+        
 	// Login URLs
 	
 	$app->get('/login', 'TU\Controllers\StaticController::getLogin')
