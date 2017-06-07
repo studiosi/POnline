@@ -142,36 +142,35 @@
 		public function showPoints(Application $app, $id) {
 			
 			$imDAO = new ImageDAO();
-			$Rmax = 0; 
-                        $Rmin = PHP_INT_MAX;
                         
 			$image = $imDAO->getImageById($app, $id);
 			$points = $imDAO->getAllClicksImage($app, $id);
 			
+                        /*
 			$centroid = MathUtils::calculateCentroid($points);		
-			
+			var_dump($centroid);
 			if(is_null($centroid)) {
 				$centroid = array();
 			}
-                        
-			/*
-                        foreach ($points as $point) {
-                            $dist = MathUtils::calculateDistance($point, $centroid);
-                            if ($dist > $Rmax) {
-                                $Rmax = $dist;
-                            }
-                            
-                            if ($dist < $Rmin) {
-                                $Rmin = $dist;
-                            }
-                        }
                         */
+			
+                        
                         //$a = MathUtils::calculateSemiMajorAxis($Rmax, $Rmin);
                         //$b = MathUtils::calculateSemiMinorAxis($Rmax, $Rmin);
                         
                         //$eccentricity = MathUtils::calculateEccentricity($a, $b);
-                        Equation::setfrompoints($points);
+                       $centroid = MathUtils::calculateCentroid($points);		
+			
+			if(is_null($centroid)) {
+				
+				$centroid = array();
+				
+			}
                         
+                        var_dump($centroid);
+                        
+                        
+                        ImageController::debug_to_console("Gotten value in controller: " . $centroid );
                         
 			$pointList = FormatUtils::getJavascriptSerializedPoints($points);
 			$cent = FormatUtils::getJavascriptSerializedPoints(array($centroid), true);
@@ -182,6 +181,26 @@
 					'pointList' => $pointList,
 					'centroid' => $cent
 			));
+                        
+                        /*
+                        Equation::setfrompoints($points);
+                        
+                        $centroid = Equation::getCenter();
+                        var_dump($centroid);
+			if(is_null($centroid)) {
+				$centroid = array();
+			}
+                        
+                        foreach ($points as $point) {
+                            $dist = MathUtils::calculateDistance($point, $centroid);
+                            if ($dist > $Rmax) {
+                                $Rmax = $dist;
+                            }
+                            
+                            if ($dist < $Rmin) {
+                                $Rmin = $dist;
+                            }
+                        }*/
 			
 		}
 
@@ -192,13 +211,18 @@
 			$image = $imDAO->getImageById($app, $id_photo);
 			
 			$points = $imDAO->getAllClicksImage($app, $id_photo); // Only valid points
-			$centroid = MathUtils::calculateCentroid($points);
+			$centroid = MathUtils::calculateCentroid($points);		
 			
 			if(is_null($centroid)) {
 				
 				$centroid = array();
 				
 			}
+                        
+                        var_dump($centroid);
+                        
+                        
+                        ImageController::debug_to_console("Gotten value in controller: " . $centroid );
 			
 			$cent = FormatUtils::getJavascriptSerializedPoints(array($centroid), true);
 			
@@ -214,6 +238,7 @@
 				'centroid' => $cent,
 				'id_player' => $id_player
 			));
+			
 			
 		}
                 
