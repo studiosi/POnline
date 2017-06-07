@@ -229,7 +229,7 @@ class Equation {
         $c = self::$equation['c'];
         
         $angle = atan(($c - $a - sqrt(($a - $c) * ($a - $c) + (2*$b) * (2*$b)))/(2*$b));
-        
+        self::$equation['angle'] = $angle;
         return $angle;
     }
 		
