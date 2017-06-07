@@ -12,6 +12,70 @@
 	class AdminController {
 		
 		private $TOKEN_BAN_UNBAN = 'token_ban_unban';
+                
+                public function getSignup(Application $app) {
+			
+			return $app['twig']->render('signup.twig');
+			
+		}
+		
+		public function postSignup(Application $app, Request $req) {
+			
+			$username = $req->get('username');
+			$pwd = $req->get('pwd');
+			$pwd_repeat = $req->get('pwd_repeat');
+			
+			$pdao = new PlayerDAO();
+			
+			$errors = array();			
+			
+			// Username
+			if(strlen($username) == 0) {
+			
+				$errors[] = "Username is empty";
+			
+			}			
+			elseif (preg_match("/^[0-9A-Za-z_]+$/", $username) == 0) {
+			
+				$errors[] = "Username can only contain ASCII letters a-z (smalls and caps), numbers and the underscore";
+			
+			}			
+			elseif($pdao->existsUsername($app, $username)) {
+				
+				$errors[] = "Username already exists";
+				
+			}
+			
+			// Password
+			if(strlen($pwd) == 0) {
+				
+				$errors[] = "Password is empty";
+				
+			}			
+			if(strcmp($pwd, $pwd_repeat) != 0) {
+				
+				$errors[] = "Passwords do not match";
+				
+			}
+			
+			// User creation / error display
+			if(count($errors) > 0) {
+				
+				$data = array(
+					'username' => $username
+				);
+				
+				return $app['twig']->render('signup.twig', array('errors' => $errors, 'data' => $data));
+				
+			}
+			else {
+				
+				$pdao->createAdmin($app, $username, $pwd);
+				return $app->redirect($app['url_generator']->generate('index'));
+				
+			}
+			
+		}
 		
 		public function showMainMenu(Application $app) {
 				
