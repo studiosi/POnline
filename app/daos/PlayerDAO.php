@@ -33,6 +33,24 @@
 			
 		}
 		
+                public function createAdmin(Application $app, $username, $password) {
+			
+			$f = new RandomLib\Factory();
+			$g = $f->getGenerator(new SecurityLib\Strength(SecurityLib\Strength::MEDIUM));			
+			$salt = $g->generateString(64);			
+			$encoder = new MessageDigestPasswordEncoder();
+			$hash = $encoder->encodePassword($password, $salt);
+			
+			$data = array(
+				'username' => $username,
+				'password' => $hash,
+				'salt' => $salt		
+			);
+			
+			$app['db']->insert('users', $data);
+			
+		}
+                
 		public function createPlayer(Application $app, $username, $password) {
 			
 			$f = new RandomLib\Factory();
