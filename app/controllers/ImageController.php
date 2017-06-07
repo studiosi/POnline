@@ -146,20 +146,10 @@
 			$image = $imDAO->getImageById($app, $id);
 			$points = $imDAO->getAllClicksImage($app, $id);
 			
-                        /*
-			$centroid = MathUtils::calculateCentroid($points);		
-			var_dump($centroid);
-			if(is_null($centroid)) {
-				$centroid = array();
-			}
-                        */
-			
+                       
+                        Equation::setfrompoints($points);
                         
-                        //$a = MathUtils::calculateSemiMajorAxis($Rmax, $Rmin);
-                        //$b = MathUtils::calculateSemiMinorAxis($Rmax, $Rmin);
-                        
-                        //$eccentricity = MathUtils::calculateEccentricity($a, $b);
-                       $centroid = MathUtils::calculateCentroid($points);		
+                        $centroid = Equation::getCenter();		
 			
 			if(is_null($centroid)) {
 				
@@ -167,10 +157,15 @@
 				
 			}
                         
-                        var_dump($centroid);
+                        $axis = Equation::getAxisLength();
+                        if(is_null($axis)) {
+				
+				$axis = array();
+				
+			} 
                         
                         
-                        ImageController::debug_to_console("Gotten value in controller: " . $centroid );
+                        ImageController::debug_to_console("Gotten value in controller: " . $centroid['x'] . " " . $centroid['y']);
                         
 			$pointList = FormatUtils::getJavascriptSerializedPoints($points);
 			$cent = FormatUtils::getJavascriptSerializedPoints(array($centroid), true);
