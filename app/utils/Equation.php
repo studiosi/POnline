@@ -95,10 +95,8 @@ class Equation {
 			$A = Ellipse::multiply($iC, Ellipse::add($S1, Ellipse::multiply($S2, $U)));
                         
                         Ellipse::setA($A);
-                        var_dump($A);
 			$eigVal = Ellipse::eigenvalues($A); // Gives correct values
                         //$eigVal = Lapack::eigenValues($A);
-                        var_dump($eigVal);
 			//eigenvectors - original commented below
                         // FIX THIS $A IS NULL IN FUNCTION
                         $eigVec = array_map(function($l) {
@@ -107,7 +105,6 @@ class Equation {
                             return array('ev' => $ev, 'cond' => 4*$ev[2]*$ev[0] - $ev[1]*$ev[1]);                           
 
                         }, $eigVal);
-                        var_dump($eigVec);
                         
                         //$te = new Ellipse();
                         
@@ -121,7 +118,6 @@ class Equation {
 			 $a1 = array_reduce($a1filter, function($p,$c) {
 				return $p['cond'] < $c['cond'] ? $p : $c;   
 			}, array('cond' => INF, err => true));
-                        var_dump($a1);
 			//if ($a1['err'] == undefined) {
 				$ev = $a1['ev'];
 				self::$equation['a'] = $ev[0];
@@ -144,7 +140,7 @@ class Equation {
 			} */
                                 
                         $center = Equation::getCenter();
-                        var_dump($center);
+                        ImageController::debug_to_console($center);
 		}
                 
     public static function printCoeff($x) {
@@ -190,8 +186,8 @@ class Equation {
     public static function getCenter() {
 			//var eq = this.equation;
 			$denom = self::$equation['b']*self::$equation['b'] - 4*self::$equation['a']*self::$equation['c'];
-			return [(2*self::$equation['c']*self::$equation['d'] - self::$equation['b']*self::$equation['e'])/$denom,
-					(2*self::$equation['a']*self::$equation['e'] - self::$equation['d']*self::$equation['b'])/$denom];
+			return array('x' => (2*self::$equation['c']*self::$equation['d'] - self::$equation['b']*self::$equation['e'])/$denom,
+					'y' => ((2*self::$equation['a']*self::$equation['e'] - self::$equation['d']*self::$equation['b'])/$denom));
 		}
                 
                          
