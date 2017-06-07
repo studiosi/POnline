@@ -10,7 +10,8 @@ class ImageDAO {
 	public function getLessClickedImage(Application $app) {
 
 		$qb = $app['db']->createQueryBuilder();
-
+                
+                //muuta max -> min takasin
 		$qb->select('min(n_clicks)')
 		->from('images_count');
 		
