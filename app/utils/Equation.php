@@ -40,7 +40,7 @@ class Equation {
 			$equation['d'] = $d;
 			$equation['e'] = $e;
 			$equation['f'] = $f;
-			$equation['angle'] = 0;
+                        $equation['angle'];
                         
 		}
 		
@@ -129,6 +129,7 @@ class Equation {
                                 
                                 $equationstring = Equation::printEquation();
                                 ImageController::debug_to_console($equationstring);
+                                equation::getAxisLength();
                                 //var_dump(self::$equation);
 			/* } else {
                                 $a1len = count($a1);
@@ -154,6 +155,7 @@ class Equation {
 				 . Equation::printCoeff(self::$equation['d']) . "x "
 				 . Equation::printCoeff(self::$equation['e']) . "y "
 				 . Equation::printCoeff(self::$equation['f']) . " = 0";
+                        
 		}
 		
     public static function convertToReducedEquation() {
@@ -175,15 +177,64 @@ class Equation {
 		}
 		
     public static function getAxisLength() {
+        $a = self::$equation['a'];  // A20   x^2 
+        $b = self::$equation['b'];  // A10   xy
+        $c = self::$equation['c'];  // A11   y^2
+        $d = self::$equation['d'];  // A01   x
+        $e = self::$equation['e'];  // A02   y
+        $f = self::$equation['f'];  // A00   0
+        //$eq = self::$equation;
+                        
+                        ImageController::debug_to_console("Test: " . $a . " " . $b . " " . $c . " " . $d . " " . $e . " " . $f);
 			//var eq = this.equation;
-			if (abs(self::$equation['b']) > 1e-9) Equation::convertToReducedEquation();
-			$num = -4*self::$equation['f']*self::$equation['a']*self::$equation['c'] + self::$equation['c']*self::$equation['d']*self::$equation['d'] 
-                                + self::$equation['a']*self::$equation['e']*self::$equation['e'];
-			return [sqrt(num/(4*self::$equation['a']*self::$equation['c']*self::$equation['c'])),
-					sqrt($num/(4*self::$equation['a']*self::$equation['a']*self::$equation['c']))];
-		}
+			//if (abs(self::$equation['b']) > 1e-9) Equation::convertToReducedEquation();
+			$num = -4*$f*$a*$c + $c*$d*$d 
+                                + $a*$e*$e;
+			$axis = [sqrt(num/(4*$a*$c*$c)),
+					sqrt($num/(4*$a*$a*$c))];
+                        var_dump($axis); 
+        	
+			//if (abs($b) > 1e-9) self::convertToReducedEquation();
+                          /*  
+			$num = -4 * $f * $a * $c + $c * $d * $d + $a * $e * $e;
+			$Ra = sqrt($num / (4 * $a * $c * $c));
+                        $Rb = sqrt($num /(4 * $a * $a * $c));
+                        
+                        ImageController::debug_to_console($Ra);
+                        ImageController::debug_to_console($Rb);
+                        */
+                        return $axis;
+			
+		
+        /*
+        $numerator = sqrt(2 * ($a * ($e * $e) + $c * ($d * $d) + $f * (($b/2) * ($b/2)) - 2 * ($b/2) * $d * $e - $a * $c * $f));
+        $denominator = sqrt(($a - $c) * ($a - $c)) + 4 * ($b * ($b/2)) * ($a + $c);
+        
+        $axis = $numerator / $denominator;          
+        */
+        //coefficient normalizing factor 
+        /*
+        $q = 64 * (($f * (4 * $a * $c - ($b * $b)) - $a * ($c * $c) + $b * $d * $c - $c * ($d * $d)) / ((4 * $a * $c - ($b * $b)) * (4 * $a * $c - ($b * $b))));
+        $Rmax = 1/8 * (sqrt(2 * $q * sqrt(($b * $b) + ($a - $c) * ($a - $c)) - 2 * $q * ($a + $c))); */
+        
+        
+        //ImageController::debug_to_console($q);
+        
+        //return $axis;
+    }
+                
+    public static function getAngle() {
+        $a = self::$equation['a'];
+        $b = self::$equation['b'];
+        $c = self::$equation['c'];
+        
+        $angle = atan(($c - $a - sqrt(($a - $c) * ($a - $c) + (2*$b) * (2*$b)))/(2*$b));
+        
+        return $angle;
+    }
 		
     public static function getCenter() {
+            
 			//var eq = this.equation;
 			$denom = self::$equation['b']*self::$equation['b'] - 4*self::$equation['a']*self::$equation['c'];
 			return array('x' => (2*self::$equation['c']*self::$equation['d'] - self::$equation['b']*self::$equation['e'])/$denom,
@@ -193,5 +244,3 @@ class Equation {
                          
 		
 }
-	//return $my;
-
