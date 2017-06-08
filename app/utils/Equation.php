@@ -185,6 +185,7 @@ class Equation {
         $f = self::$equation['f'];  // A00   0
         //$eq = self::$equation;
                         
+        /*
                         ImageController::debug_to_console("Test: " . $a . " " . $b . " " . $c . " " . $d . " " . $e . " " . $f);
 			//var eq = this.equation;
 			//if (abs(self::$equation['b']) > 1e-9) Equation::convertToReducedEquation();
@@ -195,23 +196,31 @@ class Equation {
                         var_dump($axis); 
         	
 			//if (abs($b) > 1e-9) self::convertToReducedEquation();
-                          /*  
+                        /*
 			$num = -4 * $f * $a * $c + $c * $d * $d + $a * $e * $e;
 			$Ra = sqrt($num / (4 * $a * $c * $c));
                         $Rb = sqrt($num /(4 * $a * $a * $c));
                         
                         ImageController::debug_to_console($Ra);
                         ImageController::debug_to_console($Rb);
-                        */
-                        return $axis;
+                       
+                        return $Ra; */
 			
 		
         /*
         $numerator = sqrt(2 * ($a * ($e * $e) + $c * ($d * $d) + $f * (($b/2) * ($b/2)) - 2 * ($b/2) * $d * $e - $a * $c * $f));
-        $denominator = sqrt(($a - $c) * ($a - $c)) + 4 * ($b * ($b/2)) * ($a + $c);
+        $denominator = sqrt(($a - $c) * ($a - $c)) + 4 * ($b * ($b/2)) * ($a + $c) * ($b * $b - 4*$a * $c); */
         
-        $axis = $numerator / $denominator;          
-        */
+        
+        $numeratora = ($a * ($e * $e) + $c * ($d *$d) - $b * $d * $e + (($b * $b) - 4 * $a * $c) * $f) * ($a + $c + sqrt(($a - $c) * ($a - $c) + $b * $b));  
+        $numeratorb = ($a * ($e * $e) + $c * ($d *$d) - $b * $d * $e + (($b * $b) - 4 * $a * $c) * $f) * ($a + $c - sqrt(($a - $c) * ($a - $c) + $b * $b));  
+        $denominator = $b * $b - 4 * $a * $c;
+        
+        $axisa = (- sqrt(2 * $numeratora)) / $denominator;
+        $axisb = (- sqrt(2 * $numeratorb)) / $denominator;   
+        $axis = [$axisa, $axisb];
+        
+        var_dump($axis);
         //coefficient normalizing factor 
         /*
         $q = 64 * (($f * (4 * $a * $c - ($b * $b)) - $a * ($c * $c) + $b * $d * $c - $c * ($d * $d)) / ((4 * $a * $c - ($b * $b)) * (4 * $a * $c - ($b * $b))));
@@ -220,7 +229,7 @@ class Equation {
         
         //ImageController::debug_to_console($q);
         
-        //return $axis;
+        return $axis;
     }
                 
     public static function getAngle() {
@@ -234,12 +243,21 @@ class Equation {
     }
 		
     public static function getCenter() {
-            
-			//var eq = this.equation;
-			$denom = self::$equation['b']*self::$equation['b'] - 4*self::$equation['a']*self::$equation['c'];
-			return array('x' => (2*self::$equation['c']*self::$equation['d'] - self::$equation['b']*self::$equation['e'])/$denom,
-					'y' => ((2*self::$equation['a']*self::$equation['e'] - self::$equation['d']*self::$equation['b'])/$denom));
-		}
+        $a = self::$equation['a'];  // A20   x^2 
+        $b = self::$equation['b'];  // A10   xy
+        $c = self::$equation['c'];  // A11   y^2
+        $d = self::$equation['d'];  // A01   x
+        $e = self::$equation['e'];  // A02   y
+        $f = self::$equation['f'];  // A00   0
+        
+        $Cx = (2*$c * $d - $b * $e)/($b * $b - 4*$a * $c);
+	//var eq = this.equation;
+        ImageController::debug_to_console("Cx: " . $Cx);
+                
+	$denom = self::$equation['b']*self::$equation['b'] - 4*self::$equation['a']*self::$equation['c'];
+	return array('x' => (2*self::$equation['c']*self::$equation['d'] - self::$equation['b']*self::$equation['e'])/$denom,
+            'y' => ((2*self::$equation['a']*self::$equation['e'] - self::$equation['d']*self::$equation['b'])/$denom));
+	}
                 
                          
 		
