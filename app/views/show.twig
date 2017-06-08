@@ -61,7 +61,9 @@
 			var ctx = cnv.getContext('2d');
 			var pointList={{ pointList }};
 			var centroid={{ centroid }};
-
+                        var axisa={{ axisa }};
+                        var axisb={{ axisb }};
+                        var angle={{ angle }};
 			var imageObj = new Image();
 			imageObj.onload = function() {
 
@@ -83,7 +85,11 @@
 				ctx.moveTo(centroid[0], centroid[1] - 10);
 				ctx.lineTo(centroid[0], centroid[1] + 10);
 				ctx.strokeStyle="yellow";
-				ctx.stroke();				
+				ctx.stroke();	
+                                
+                                ctx.beginPath();
+                                ctx.ellipse(centroid[0] , centroid[1], axisa, axisb, angle * Math.PI/180, 0, 2 * Math.PI);
+                                ctx.stroke();
 
 			}
 			imageObj.src = "/img/{{ image.filename }}";			
