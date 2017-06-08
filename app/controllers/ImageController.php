@@ -163,9 +163,19 @@
 				$axis = array();
 				
 			} 
+                        var_dump($axis);
                         
+                        $angle = Equation::getAngle();
+                         if(is_null($angle)) {
+				
+				$angle = 0;
+				
+			} 
                         
-                        ImageController::debug_to_console("Gotten value in controller: " . $centroid['x'] . " " . $centroid['y']);
+                        ImageController::debug_to_console("Gotten angle value in controller: " . $angle);
+                        
+                        ImageController::debug_to_console("Gotten centroid value in controller: " . $centroid['x'] . " " . $centroid['y']);
+                        ImageController::debug_to_console("Gotten axis in controller: " . $axis);
                         
 			$pointList = FormatUtils::getJavascriptSerializedPoints($points);
 			$cent = FormatUtils::getJavascriptSerializedPoints(array($centroid), true);
