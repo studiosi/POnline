@@ -173,19 +173,23 @@
 			} 
                         
                         ImageController::debug_to_console("Gotten angle value in controller: " . $angle);
-                        
                         ImageController::debug_to_console("Gotten centroid value in controller: " . $centroid['x'] . " " . $centroid['y']);
                         ImageController::debug_to_console("Gotten axis in controller: " . $axis);
                         
 			$pointList = FormatUtils::getJavascriptSerializedPoints($points);
 			$cent = FormatUtils::getJavascriptSerializedPoints(array($centroid), true);
+                        $axisa = $axis[0];
+                        $axisb = $axis[1];
 			
 			return $app['twig']->render('show.twig',
 			array(
-					'image' => $image,
-					'pointList' => $pointList,
-					'centroid' => $cent
-			));
+				'image' => $image,
+				'pointList' => $pointList,
+				'centroid' => $cent,
+                                'axisa' => $axisa,
+                                'axisb' => $axisb,
+                                'angle' => $angle
+                        ));
                         
                         /*
                         Equation::setfrompoints($points);
