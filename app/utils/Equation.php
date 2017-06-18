@@ -29,6 +29,14 @@ class Equation {
         'angle' => 0
     );
     
+    private static $center = array();
+    private static $f1_x = 0;
+    private static $f1_y = 0;
+    private static $f2_x = 0;
+    private static $f2_y = 0;
+    private static $axisa = 0;
+    private static $axisb = 0;
+    
     
     //$my = function($arg) {
     //		this.$equation = {$a:0, $b:0, $c:0, $d:0, $e:0, $f:0, $angle:0};
@@ -184,33 +192,10 @@ class Equation {
         $e = self::$equation['e'];  // A02   y
         $f = self::$equation['f'];  // A00   0
         //$eq = self::$equation;
-                        
-        /*
-                        ImageController::debug_to_console("Test: " . $a . " " . $b . " " . $c . " " . $d . " " . $e . " " . $f);
-			//var eq = this.equation;
-			//if (abs(self::$equation['b']) > 1e-9) Equation::convertToReducedEquation();
-			$num = -4*$f*$a*$c + $c*$d*$d 
-                                + $a*$e*$e;
-			$axis = [sqrt(num/(4*$a*$c*$c)),
-					sqrt($num/(4*$a*$a*$c))];
-                        var_dump($axis); 
-        	
-			//if (abs($b) > 1e-9) self::convertToReducedEquation();
-                        /*
-			$num = -4 * $f * $a * $c + $c * $d * $d + $a * $e * $e;
-			$Ra = sqrt($num / (4 * $a * $c * $c));
-                        $Rb = sqrt($num /(4 * $a * $a * $c));
-                        
-                        ImageController::debug_to_console($Ra);
-                        ImageController::debug_to_console($Rb);
-                       
-                        return $Ra; */
-			
-		
-        /*
-        $numerator = sqrt(2 * ($a * ($e * $e) + $c * ($d * $d) + $f * (($b/2) * ($b/2)) - 2 * ($b/2) * $d * $e - $a * $c * $f));
-        $denominator = sqrt(($a - $c) * ($a - $c)) + 4 * ($b * ($b/2)) * ($a + $c) * ($b * $b - 4*$a * $c); */
-        
+                  
+        // if (Math.abs(eq.b) > 1e-9) 
+        // this.convertToReducedEquation(); 
+        // IMPLEMENT THIS WHEN b ANGLE is 0º or 90º!
         
         $numeratora = ($a * ($e * $e) + $c * ($d *$d) - $b * $d * $e + (($b * $b) - 4 * $a * $c) * $f) * ($a + $c + sqrt(($a - $c) * ($a - $c) + $b * $b));  
         $numeratorb = ($a * ($e * $e) + $c * ($d *$d) - $b * $d * $e + (($b * $b) - 4 * $a * $c) * $f) * ($a + $c - sqrt(($a - $c) * ($a - $c) + $b * $b));  
@@ -220,14 +205,8 @@ class Equation {
         $axisb = (- sqrt(2 * $numeratorb)) / $denominator;   
         $axis = [$axisa, $axisb];
         
-        var_dump($axis);
-        //coefficient normalizing factor 
-        /*
-        $q = 64 * (($f * (4 * $a * $c - ($b * $b)) - $a * ($c * $c) + $b * $d * $c - $c * ($d * $d)) / ((4 * $a * $c - ($b * $b)) * (4 * $a * $c - ($b * $b))));
-        $Rmax = 1/8 * (sqrt(2 * $q * sqrt(($b * $b) + ($a - $c) * ($a - $c)) - 2 * $q * ($a + $c))); */
-        
-        
-        //ImageController::debug_to_console($q);
+        self::$axisa = $axisa;
+        self::$axisb = $axisb;
         
         return $axis;
     }
@@ -255,10 +234,99 @@ class Equation {
         ImageController::debug_to_console("Cx: " . $Cx);
                 
 	$denom = self::$equation['b']*self::$equation['b'] - 4*self::$equation['a']*self::$equation['c'];
-	return array('x' => (2*self::$equation['c']*self::$equation['d'] - self::$equation['b']*self::$equation['e'])/$denom,
+	$center = array('x' => (2*self::$equation['c']*self::$equation['d'] - self::$equation['b']*self::$equation['e'])/$denom,
             'y' => ((2*self::$equation['a']*self::$equation['e'] - self::$equation['d']*self::$equation['b'])/$denom));
+        
+        self::$center = $center;
+        return $center;
+        
 	}
+        
+    public static function getFoci() {
+        $temp_c;
+        $axis = Equation::getAxisLength();
+        $a = $axis[0];
+        $b = $axis[1];
+        
+        if($a > $b)
+          $temp_c = sqrt($a* $a - $b * $b);
+        else
+          $temp_c = sqrt($b * $b - $a * $a);
+        
+        $ellipse = Equation::getCenter();
+        
+        $f1_x = ellipse['x'] - $temp_c * cos(self::$equation['angle'] * M_PI / 180);
+        $f1_y = ellipse.['y'] - $temp_c * sin(self::$equation['angle'] * M_PI /180);
+        $f2_x = ellipse.['x'] + $temp_c * cos(self::$equation['angle'] * M_PI /180);
+        $f2_y = ellipse.['y'] + $temp_c * sin(self::$equation['angle'] * M_PI / 180); 
+        
+        self::$f1_x = $f1_x;
+        self::$f1_y = $f1_y;
+        self::$f2_x = $f2_x;
+        self::$f2_y = $f1_y;
                 
-                         
+        }
+    
+  
+
+    // From http://wwwf.imperial.ac.uk/~rn/distance2ellipse.pdf .
+    // Calculates the distance of a point from the border of ellipse
+    public static function pointOnEllipse($a, $b, $p){
+        $center = Equation::getCenter();
+        
+        $maxIterations = 10;
+        $eps = 0.1/max($a, $b);
+
+        $p1 = array('x' => $p['x'] - $center['x'], 'y' => $p['y'] - $center['y']);
+
+        // Intersection of straight line from origin to p with ellipse
+        // as the first approximation:
+        $phi = atan2($a * $p1['y'], $b * $p1['x']);
+
+        // Newton iteration to find solution of
+        // f(θ) := (a^2 − b^2) cos(phi) sin(phi) − x a sin(phi) + y b cos(phi) = 0:
+        for ($i= 0; $i < $maxIterations; $i++) {
+            // function value and derivative at phi:
+            $c = cos($phi);
+            $s = sin($phi);
+            $f = ($a*$a - $b*$b)*$c*$s - $p1['x']*$a*$s + $p1['y']*$b*$c;
+            $f1 = ($a*$a - $b*$b)*($c*$c - $s*$s) - $p1['x']*$a*$c - $p1['y']*$b*$s;
+
+            $delta = $f/$f1;
+            $phi = $phi - $delta;
+            if (abs($delta) < $eps)  { break; }
+        }
+
+        return array('x' => $center['x'] + $a * cos($phi), 'y' => $center['y'] + $b * sin($phi));
+    }
+    
+    /*
+    public static function pointOnEllipse(center: CGPoint, a: CGFloat, b: CGFloat, closestTo p: CGPoint) -> CGPoint {
+
+        let maxIterations = 10
+        let eps = CGFloat(0.1/max(a, b))
+
+        let p1 = CGPoint(x: p.x - center.x, y: p.y - center.y)
+
+        // Intersection of straight line from origin to p with ellipse
+        // as the first approximation:
+        var phi = atan2(a * p1.y, b * p1.x)
+
+        // Newton iteration to find solution of
+        // f(θ) := (a^2 − b^2) cos(phi) sin(phi) − x a sin(phi) + y b cos(phi) = 0:
+        for i in 0..<maxIterations {
+            // function value and derivative at phi:
+            let (c, s) = (cos(phi), sin(phi))
+            let f = (a*a - b*b)*c*s - p1.x*a*s + p1.y*b*c
+            let f1 = (a*a - b*b)*(c*c - s*s) - p1.x*a*c - p1.y*b*s
+
+            let delta = f/f1
+            phi = phi - delta
+            print(i)
+            if abs(delta) < eps { break }
+        }
+
+        return CGPoint(x: center.x + a * cos(phi), y: center.y + b * sin(phi))
+    } */
 		
 }
