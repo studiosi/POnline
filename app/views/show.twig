@@ -77,7 +77,7 @@
 					ctx.fillStyle = 'red';
 					ctx.fill();
 				});
-
+                                
 				ctx.beginPath();
 				ctx.beginPath();
 				ctx.moveTo(centroid[0] - 10, centroid[1]);
@@ -90,6 +90,8 @@
                                 ctx.beginPath();
                                 ctx.ellipse(centroid[0] , centroid[1], axisb, axisa, angle * Math.PI/180, 0, 2 * Math.PI);
                                 ctx.stroke();
+                                
+                                
 
 			}
 			imageObj.src = "/img/{{ image.filename }}";			
