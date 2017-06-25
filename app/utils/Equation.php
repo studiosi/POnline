@@ -149,7 +149,6 @@ class Equation {
 			} */
                                 
                         $center = Equation::getCenter();
-                        ImageController::debug_to_console($center);
 		}
                 
     public static function printCoeff($x) {
@@ -231,7 +230,6 @@ class Equation {
         
         $Cx = (2*$c * $d - $b * $e)/($b * $b - 4*$a * $c);
 	//var eq = this.equation;
-        ImageController::debug_to_console("Cx: " . $Cx);
                 
 	$denom = self::$equation['b']*self::$equation['b'] - 4*self::$equation['a']*self::$equation['c'];
 	$center = array('x' => (2*self::$equation['c']*self::$equation['d'] - self::$equation['b']*self::$equation['e'])/$denom,
