@@ -21,8 +21,7 @@ Return:
     class RANSAC {
 
     private $iter = 0;
-    //private $besterr = INF;
-    private $besterr = 0;
+    private $besterr = INF;
     private $threshold = 2.5;     // Used to determine if error is good enough 
     private $inliersRatio = 0.7;  // To accept a model, atl least 70% of points must fit 
     private $k = 500;
@@ -36,8 +35,10 @@ Return:
     public function ransacAlg($data) {
         $this->d = count($data) * $this->inliersratio;
         //$bestfit = array();
+        
         $iter = 0;
         while ($iter < $this->k) {
+            $thiserr = 0;
             $alsoinliers = array();
             ImageController::debug_to_console("Iter: " . $iter );    
             // Adding 5 elements to testinliers array
@@ -60,6 +61,7 @@ Return:
                 $p2 =  Equation::pointOnEllipse($axis[0], $axis[1], $p);
                 $v = array('dx' => $p['x'] - $p2['x'], 'dy' => $p['y'] - $p2['y']);
                 $distancefromborder = hypot($v['dx'], $v['dy']);
+                $thiserr += $distancefromborder;
                 //if point fits maybemodel with an error smaller than t add point to alsoinliers
                 if ($distancefromborder < $this->t) {
                     array_push($alsoinliers, $p);
@@ -72,11 +74,11 @@ Return:
                 // now test how good it is
                 //$bettermodel = Equation::setfrompoints($this->alsoinliers); // model parameters fitted to all points in maybeinliers and alsoinliers
                 $bettermodel = $alsoinliers;
-                $thiserr = count($alsoinliers); //a measure of how well model fits these points
-                //if ($thiserr < $this->besterr) {
-                if ($thiserr > $this->besterr) {
+                //$thiserr = count($alsoinliers); //a measure of how well model fits these points
+                if ($thiserr < $this->besterr) {
+                //if ($thiserr > $this->besterr) {
                     $this->bestfit = $bettermodel;
-                    $this->besterr = $this->thiserr;
+                    $this->besterr = $thiserr;
                 }
             }
             $iter++;
