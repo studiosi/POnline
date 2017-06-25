@@ -12,6 +12,7 @@
         use TU\Utils\Ellipse;
 	use TU\DAO\PlayerDAO;
 	use TU\Utils\FormatUtils;
+        use TU\Utils\Ransac;
 				
 	class ImageController {
 		
@@ -144,9 +145,14 @@
 			$imDAO = new ImageDAO();
                         
 			$image = $imDAO->getImageById($app, $id);
-			$points = $imDAO->getAllClicksImage($app, $id);
+			$pointsraw = $imDAO->getAllClicksImage($app, $id);
 			
+                        $ransac = new Ransac;
+                        $points = $ransac->ransacAlg($pointsraw);
+                        
+                        var_dump($points);
                        
+                        
                         Equation::setfrompoints($points);
                         
                         $centroid = Equation::getCenter();		
@@ -163,7 +169,6 @@
 				$axis = array();
 				
 			} 
-                        var_dump($axis);
                         
                         $angle = Equation::getAngle();
                          if(is_null($angle)) {
@@ -172,9 +177,12 @@
 				
 			} 
                         
-                        ImageController::debug_to_console("Gotten angle value in controller: " . $angle);
-                        ImageController::debug_to_console("Gotten centroid value in controller: " . $centroid['x'] . " " . $centroid['y']);
-                        ImageController::debug_to_console("Gotten axis in controller: " . $axis);
+                        // $p is a test point
+                        /*
+                        $p = array('x' => 430, 'y' => 484);
+                        $p2 =  Equation::pointOnEllipse($axis[0], $axis[1], $p);
+                        $v = array('dx' => $p['x'] - $p2['x'], 'dy' => $p['y'] - $p2['y']);
+                        $distancefromborder = hypot($v['dx'], $v['dy']); */
                         
 			$pointList = FormatUtils::getJavascriptSerializedPoints($points);
 			$cent = FormatUtils::getJavascriptSerializedPoints(array($centroid), true);
