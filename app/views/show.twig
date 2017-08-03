@@ -60,6 +60,7 @@
 			var cnv = document.getElementById('image');
 			var ctx = cnv.getContext('2d');
 			var pointList={{ pointList }};
+                        var outlierList={{ outlierList }};
 			var centroid={{ centroid }};
                         var axisa={{ axisa }};
                         var axisb={{ axisb }};
@@ -70,13 +71,20 @@
 				ctx.canvas.width = this.width;
 				ctx.canvas.height = this.height;								
 				ctx.drawImage(imageObj, 0, 0);
-
+                                
 				pointList.forEach(function(element, index, array) {
 					ctx.beginPath();
 					ctx.arc(element[0], element[1], 1, 0, 2 * Math.PI, false);
 					ctx.fillStyle = 'red';
 					ctx.fill();
 				});
+                                
+                                outlierList.forEach(function(element, index, array) {
+					ctx.beginPath();
+					ctx.arc(element[0], element[1], 1, 0, 2 * Math.PI, false);
+					ctx.fillStyle = 'blue';
+					ctx.fill();
+				}); 
                                 
 				ctx.beginPath();
 				ctx.beginPath();
