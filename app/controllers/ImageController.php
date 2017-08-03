@@ -150,8 +150,13 @@
                         $ransac = new Ransac;
                         $points = $ransac->ransacAlg($pointsraw);
                         
-                        var_dump($points);
-                       
+                        $outlier_points = array();
+                        
+                        for ($i = 0; $i < count($pointsraw); $i++) {
+                            if (!in_array($pointsraw[$i], $points)) {
+                                array_push($outlier_points, $pointsraw[$i]);
+                            }
+                        } 
                         
                         Equation::setfrompoints($points);
                         
@@ -177,6 +182,8 @@
 				
 			} 
                         
+                        var_dump($outlier_points);
+                        
                         // $p is a test point
                         /*
                         $p = array('x' => 430, 'y' => 484);
@@ -185,6 +192,7 @@
                         $distancefromborder = hypot($v['dx'], $v['dy']); */
                         
 			$pointList = FormatUtils::getJavascriptSerializedPoints($points);
+                        $outlierList = FormatUtils::getJavascriptSerializedPoints($outlier_points);
 			$cent = FormatUtils::getJavascriptSerializedPoints(array($centroid), true);
                         $axisa = $axis[0];
                         $axisb = $axis[1];
@@ -193,6 +201,7 @@
 			array(
 				'image' => $image,
 				'pointList' => $pointList,
+                                'outlierList' => $outlierList,
 				'centroid' => $cent,
                                 'axisa' => $axisa,
                                 'axisb' => $axisb,
