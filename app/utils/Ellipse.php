@@ -99,7 +99,7 @@
 		} else {
 			$phi = acos($d / 2) / 3;
 		}
-                ImageController::debug_to_console("Ellipse eigenvalues debug: " . $q . " " . $K . " " . $p . " " . $d . " " . $d);
+                //ImageController::debug_to_console("Ellipse eigenvalues debug: " . $q . " " . $K . " " . $p . " " . $d . " " . $d);
                 // PHI IS VALUE OF NAN IN SOME CASES, FIX
 		return [$q + 2 * $p * cos($phi),
 		$q + 2 * $p * cos($phi + (2 * M_PI / 3)),
