@@ -125,7 +125,7 @@ class Equation {
                         
 			 $a1 = array_reduce($a1filter, function($p,$c) {
 				return $p['cond'] < $c['cond'] ? $p : $c;   
-			}, array('cond' => INF, err => true));
+			}, array('cond' => INF, 'err' => true));
 			//if ($a1['err'] == undefined) {
 				$ev = $a1['ev'];
 				self::$equation['a'] = $ev[0];
@@ -136,7 +136,6 @@ class Equation {
 				self::$equation['f'] = $U[2][0]*$ev[0] + $U[2][1]*$ev[1] + $U[2][2]*$ev[2];
                                 
                                 $equationstring = Equation::printEquation();
-                                ImageController::debug_to_console($equationstring);
                                 equation::getAxisLength();
                                 //var_dump(self::$equation);
 			/* } else {
