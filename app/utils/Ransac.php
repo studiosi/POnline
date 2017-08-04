@@ -23,8 +23,8 @@ Return:
     private $iter = 0;
     private $besterr = INF;
     private $threshold = 2.5;     // Used to determine if error is good enough 
-    private $inliersRatio = 0.9;  // To accept a model, atl least 70% of points must fit 
-    private $k = 500;
+    private $inliersRatio = 0.7;  // To accept a model, atl least 70% of points must fit 
+    private $k = 250;
     private $testinliers = array();
     private $testmodel; //model parameters fitted to maybeinliers
     
@@ -83,7 +83,7 @@ Return:
                 $bettermodel = $alsoinliers;
                 //$thiserr = count($alsoinliers); //a measure of how well model fits these points
                 if ($thiserr < $this->besterr) {
-                    $runtreshold = 0;
+                    $runthreshold = 0;
                 //if ($thiserr > $this->besterr) {
                     $this->bestfit = $bettermodel;
                     $this->besterr = $thiserr;
@@ -92,7 +92,7 @@ Return:
             }
             $iter++;
             $runthreshold++;
-            if (($runthreshold > 50) || count($this->bestfit) > $this->threshold) {
+            if (($runthreshold > 150) || count($this->bestfit) > $this->threshold) {
                 return $this->bestfit;
             }
         }
