@@ -50,7 +50,7 @@
 		</div>
 	
 		<div class="margin-top">
-		<canvas class="canvas-centered" id="image">YOUR BROWSER SUCKS AND THIS WON'T WORK. UPDATE NOW!</canvas>
+		<canvas class="canvas-centered" id="image">YOUR BROWSER SUCKS AND THIS WON'T WORK. UPDATE NOW : )!</canvas>
 		</div>
 				
 		
@@ -84,7 +84,9 @@
 					ctx.arc(element[0], element[1], 1, 0, 2 * Math.PI, false);
 					ctx.fillStyle = 'blue';
 					ctx.fill();
-				}); 
+				});
+                                
+                               
                                 
 				ctx.beginPath();
 				ctx.beginPath();
@@ -97,11 +99,10 @@
                                 
                                 ctx.beginPath();
                                 ctx.ellipse(centroid[0] , centroid[1], axisb, axisa, angle * Math.PI/180, 0, 2 * Math.PI);
+                                // angle * Math.PI/180
                                 ctx.stroke();
-                                
-                                
 
-			}
+			};
 			imageObj.src = "/img/{{ image.filename }}";			
 
 		</script>			
