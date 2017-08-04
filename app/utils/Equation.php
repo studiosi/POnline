@@ -167,8 +167,8 @@ class Equation {
     public static function convertToReducedEquation() {
 			$eq = self::$equation;
 			$t = atan(self::$equation['b'] / (self::$equation['c'] - self::$equation['a']))/2;
-			$s = sin(t);
-			$c = cos(t);
+			$s = sin($t);
+			$c = cos($t);
 			$old_a = self::$equation['a'];
                         $old_b = self::$equation['b'];
 			$old_c = self::$equation['c'];
@@ -189,10 +189,11 @@ class Equation {
         $d = self::$equation['d'];  // A01   x
         $e = self::$equation['e'];  // A02   y
         $f = self::$equation['f'];  // A00   0
-        //$eq = self::$equation;
-                  
-        // if (Math.abs(eq.b) > 1e-9) 
-        // this.convertToReducedEquation(); 
+        $eq = self::$equation;
+            /*    
+        if (abs($b) > 1e-9) {
+            self::convertToReducedEquation(); 
+        } */
         // IMPLEMENT THIS WHEN b ANGLE is 0º or 90º!
         
         $numeratora = ($a * ($e * $e) + $c * ($d *$d) - $b * $d * $e + (($b * $b) - 4 * $a * $c) * $f) * ($a + $c + sqrt(($a - $c) * ($a - $c) + $b * $b));  
@@ -214,9 +215,22 @@ class Equation {
         $b = self::$equation['b'];
         $c = self::$equation['c'];
         
-        $angle = atan(($c - $a - sqrt(($a - $c) * ($a - $c) + (2*$b) * (2*$b)))/(2*$b));
-        self::$equation['angle'] = $angle;
-        return $angle;
+        /*
+        if (($b == 0) && ($a > $c)) {
+            $angle = 0 * Math.PI/180;
+        }
+        else if (($b == 0) && ($a > $c)) {
+            $angle = 90 * Math.PI/180;
+        }*/ 
+         if ($b == 0)  {
+            return self::$equation['angle'];
+            
+        } else {
+            self::$equation['angle'] = atan(($c - $a - sqrt(($a - $c) * ($a - $c) + (2*$b) * (2*$b)))/(2*$b));
+        }
+        //self::$equation['angle'] = $angle;
+        
+        return self::$equation['angle'];
     }
 		
     public static function getCenter() {
@@ -269,8 +283,7 @@ class Equation {
     // From http://wwwf.imperial.ac.uk/~rn/distance2ellipse.pdf .
     // Calculates the distance of a point from the border of ellipse
     public static function pointOnEllipse($a, $b, $p){
-        $center = Equation::getCenter();
-        
+        $center = Equation::getCenter(); // Gets center
         $maxIterations = 10;
         $eps = 0.1/max($a, $b);
 
