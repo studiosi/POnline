@@ -151,10 +151,11 @@
                         $points = $ransac->ransacAlg($pointsraw);
                         
                         $outlier_points = array();
-                        
+                        $j = 0;
                         for ($i = 0; $i < count($pointsraw); $i++) {
                             if (!in_array($pointsraw[$i], $points)) {
-                                array_push($outlier_points, $pointsraw[$i]);
+                                $outlier_points[$j] = $pointsraw[$i];
+                                $j++; 
                             }
                         } 
                         
@@ -163,33 +164,18 @@
                         $centroid = Equation::getCenter();		
 			
 			if(is_null($centroid)) {
-				
-				$centroid = array();
-				
+                            $centroid = array();
 			}
                         
                         $axis = Equation::getAxisLength();
                         if(is_null($axis)) {
-				
-				$axis = array();
-				
+                            $axis = array();
 			} 
                         
                         $angle = Equation::getAngle();
                          if(is_null($angle)) {
-				
 				$angle = 0;
-				
 			} 
-                        
-                        var_dump($outlier_points);
-                        
-                        // $p is a test point
-                        /*
-                        $p = array('x' => 430, 'y' => 484);
-                        $p2 =  Equation::pointOnEllipse($axis[0], $axis[1], $p);
-                        $v = array('dx' => $p['x'] - $p2['x'], 'dy' => $p['y'] - $p2['y']);
-                        $distancefromborder = hypot($v['dx'], $v['dy']); */
                         
 			$pointList = FormatUtils::getJavascriptSerializedPoints($points);
                         $outlierList = FormatUtils::getJavascriptSerializedPoints($outlier_points);
@@ -207,26 +193,6 @@
                                 'axisb' => $axisb,
                                 'angle' => $angle
                         ));
-                        
-                        /*
-                        Equation::setfrompoints($points);
-                        
-                        $centroid = Equation::getCenter();
-                        var_dump($centroid);
-			if(is_null($centroid)) {
-				$centroid = array();
-			}
-                        
-                        foreach ($points as $point) {
-                            $dist = MathUtils::calculateDistance($point, $centroid);
-                            if ($dist > $Rmax) {
-                                $Rmax = $dist;
-                            }
-                            
-                            if ($dist < $Rmin) {
-                                $Rmin = $dist;
-                            }
-                        }*/
 			
 		}
 
@@ -245,11 +211,6 @@
 				
 			}
                         
-                        var_dump($centroid);
-                        
-                        
-                        ImageController::debug_to_console("Gotten value in controller: " . $centroid );
-			
 			$cent = FormatUtils::getJavascriptSerializedPoints(array($centroid), true);
 			
 			$user_points = $imDAO->getAllClicksUserImage($app, $id_player, $id_photo);			
