@@ -90,8 +90,7 @@
 		$p = sqrt(Ellipse::trace(Ellipse::multiply($K,$K))/6);
 		$d = Ellipse::determinant(Ellipse::scale($K, 1 / $p));  
                 $pi = M_PI;
-                // pi(), M_PI or acos(-1) for getting the value of pi
-		$phi;                        // SO FAR WORKS
+		$phi;                        
 		if ($d <= -2) {
 			$phi = M_PI / 3;
 		} else if ($d >= 2) {
