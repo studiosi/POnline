@@ -1,7 +1,11 @@
 <?php
 
 	global $app;
-
+        
+        
+        
+        //
+        
 	$app->get('/', 'TU\Controllers\StaticController::getIndex')
 		->bind('index');
 	
