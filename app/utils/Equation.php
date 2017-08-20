@@ -135,8 +135,8 @@ class Equation {
 				self::$equation['e'] = $U[1][0]*$ev[0] + $U[1][1]*$ev[1] + $U[1][2]*$ev[2];
 				self::$equation['f'] = $U[2][0]*$ev[0] + $U[2][1]*$ev[1] + $U[2][2]*$ev[2];
                                 
-                                $equationstring = Equation::printEquation();
-                                equation::getAxisLength();
+                                //$equationstring = Equation::printEquation();
+                               // equation::getAxisLength();
                                 //var_dump(self::$equation);
 			/* } else {
                                 $a1len = count($a1);
@@ -147,7 +147,7 @@ class Equation {
                                 
 			} */
                                 
-                        $center = Equation::getCenter();
+                        //$center = Equation::getCenter();
 		}
                 
     public static function printCoeff($x) {
@@ -215,15 +215,15 @@ class Equation {
         $b = self::$equation['b'];
         $c = self::$equation['c'];
         
-        /*
+        
         if (($b == 0) && ($a > $c)) {
-            $angle = 0 * Math.PI/180;
+            self::$equation['angle'] = 0;
         }
         else if (($b == 0) && ($a > $c)) {
-            $angle = 90 * Math.PI/180;
-        }*/ 
+            self::$equation['angle'] = 90 * M_PI/180;
+        /*} 
          if ($b == 0)  {
-            return self::$equation['angle'];
+            return self::$equation['angle'];*/
             
         } else {
             self::$equation['angle'] = atan(($c - $a - sqrt(($a - $c) * ($a - $c) + (2*$b) * (2*$b)))/(2*$b));
