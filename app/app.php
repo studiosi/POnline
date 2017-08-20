@@ -2,9 +2,7 @@
 
 	// Require the composer autoloader
 	require_once __DIR__ . '/../vendor/autoload.php';
-
 	use TU\Utils\FileRequirer;
-
 	// Create the app object
 	$app = new Silex\Application();
 
