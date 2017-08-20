@@ -8,7 +8,7 @@
 	    'security.firewalls' => array(	    
 	        'admin' => array(	            
 	            'pattern' => '^/admin/',
-	            'form' => array(	            
+	            'form' => array(	
 	            	'login_path' => '/login', 
 	            	'check_path' => '/admin/login_check',
 	            	'always_use_default_target_path' => true,
