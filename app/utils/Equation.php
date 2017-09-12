@@ -191,10 +191,10 @@ class Equation {
         $e = self::$equation['e'];  // A02   y
         $f = self::$equation['f'];  // A00   0
         $eq = self::$equation;
-            /*    
+               
         if (abs($b) > 1e-9) {
             self::convertToReducedEquation(); 
-        } */
+        } 
         // IMPLEMENT THIS WHEN b ANGLE is 0º or 90º!
         
         $numeratora = ($a * ($e * $e) + $c * ($d *$d) - $b * $d * $e + (($b * $b) - 4 * $a * $c) * $f) * ($a + $c + sqrt(($a - $c) * ($a - $c) + $b * $b));  
@@ -216,9 +216,8 @@ class Equation {
         $b = self::$equation['b'];
         $c = self::$equation['c'];
         
-        
-        
-        self::$equation['angle'] = atan(($c - $a - sqrt(($a - $c) * ($a - $c) + (2*$b) * (2*$b)))/(2*$b));
+        if (self::$equation['b'] != 0)
+            self::$equation['angle'] = atan(($c - $a - sqrt(($a - $c) * ($a - $c) + (2*$b) * (2*$b)))/(2*$b));
         
         //self::$equation['angle'] = $angle;
         
@@ -244,7 +243,7 @@ class Equation {
         return $center;
         
 	}
-        
+    /*    
     public static function getFoci() {
         $temp_c;
         $axis = Equation::getAxisLength();
@@ -268,7 +267,7 @@ class Equation {
         self::$f2_x = $f2_x;
         self::$f2_y = $f1_y;
                 
-        }
+        } */
     
   
 
