@@ -54,9 +54,22 @@ Return:
             
             // Fitting ellipse
             Equation::setfrompoints($this->testinliers);
+            
+            while (Equation::getErr() == true) {
+                $j = 0;
+                while ($j < 5) {
+                $r = rand(0 , count($data)-1);
+                    if (!in_array($data[$r], $this->testinliers)) {
+                        $this->testinliers[$j] = $data[$r]; 
+                        $j = $j + 1;
+                    }
+                }
+                Equation::setfrompoints($this->testinliers);
+            }
+            
             $center = Equation::getCenter();
             $axis = Equation::getAxisLength();
-
+            
             //for every point in data not in testinliers {
             for ($i = 0; $i < count($data); $i++) {
                 $p = $data[$i];
@@ -96,8 +109,11 @@ Return:
                 return $this->bestfit;
             }
         }
-        
-        return $this->bestfit;
+        if (empty($this->bestfit)) $this->bestfit = $this->testinliers;
+        //if (Equation::getErr() == true)
+            return $this->bestfit;
+       // else
+          //  return $this->testinliers;
     }
 
 }
