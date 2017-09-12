@@ -98,8 +98,7 @@
 				ctx.stroke();	
                                 
                                 ctx.beginPath();
-                                ctx.ellipse(centroid[0] , centroid[1], axisb, axisa, angle * Math.PI/180, 0, 2 * Math.PI);
-                                // angle * Math.PI/180
+                                ctx.ellipse(centroid[0] , centroid[1], axisb, axisa, angle * 180 / Math.PI, 0, 2 * Math.PI);
                                 ctx.stroke();
 
 			};
