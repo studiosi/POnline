@@ -26,7 +26,8 @@ class Equation {
         'd' => 0,
         'e' => 0,
         'f' => 0,
-        'angle' => 0
+        'angle' => 0,
+        'err' => false
     );
     
     private static $center = array();
@@ -97,16 +98,14 @@ class Equation {
 			    [.5, 0, 0]];
                         
                         
-                        //var_dump($b);
 			$U = Ellipse::multiply($iS3, $S2T); 
 			$U = Ellipse::scale($U, -1);
 			$A = Ellipse::multiply($iC, Ellipse::add($S1, Ellipse::multiply($S2, $U)));
                         
                         Ellipse::setA($A);
-			$eigVal = Ellipse::eigenvalues($A); // Gives correct values
+			$eigVal = Ellipse::eigenvalues($A); 
                         //$eigVal = Lapack::eigenValues($A);
 			//eigenvectors - original commented below
-                        // FIX THIS $A IS NULL IN FUNCTION
                         $eigVec = array_map(function($l) {
                             $EA = Ellipse::getA();
                             $ev = Ellipse::nullspace(Ellipse::add($EA, [[-$l, 0, 0],[0, -$l, 0],[0, 0, -$l]]));
@@ -114,19 +113,20 @@ class Equation {
 
                         }, $eigVal);
                         
-                        //$te = new Ellipse();
                         
                         Ellipse::setA($A);
                        
 			//condition
-                        // FIX THIS
                         $a1filter = array_filter($eigVec,function($e) {
-                        return $e['cond'] > 0;});
+                            return $e['cond'] > 0;
+                        });
                         
-			 $a1 = array_reduce($a1filter, function($p,$c) {
-				return $p['cond'] < $c['cond'] ? $p : $c;   
+			$a1 = array_reduce($a1filter, function($p,$c) {
+                            return $p['cond'] < $c['cond'] ? $p : $c;   
 			}, array('cond' => INF, 'err' => true));
-			//if ($a1['err'] == undefined) {
+                        
+                        // TO DO - HANDLE THE ERROR CASES
+			if (array_key_exists('err', $a1) == false) {
 				$ev = $a1['ev'];
 				self::$equation['a'] = $ev[0];
 				self::$equation['b'] = $ev[1];
@@ -134,18 +134,19 @@ class Equation {
 				self::$equation['d'] = $U[0][0]*$ev[0] + $U[0][1]*$ev[1] + $U[0][2]*$ev[2];
 				self::$equation['e'] = $U[1][0]*$ev[0] + $U[1][1]*$ev[1] + $U[1][2]*$ev[2];
 				self::$equation['f'] = $U[2][0]*$ev[0] + $U[2][1]*$ev[1] + $U[2][2]*$ev[2];
-                                
+                                self::$equation['err'] = false;
                                 //$equationstring = Equation::printEquation();
                                // equation::getAxisLength();
-                                //var_dump(self::$equation);
-			/* } else {
-                                $a1len = count($a1);
-                                ImageController::debug_to_console("Pb with eigenvectors, length = " . count($a1));
-                                ImageController::debug_to_console($eigVec);
-                                var_dump($eigVec);
+			} else {
+                                //$a1len = count($a1);
+                                //ImageController::debug_to_console("Pb with eigenvectors, length = " . count($a1));
+                                //ImageController::debug_to_console($eigVec);
+                                var_dump($a1);
+                                //ImageController::debug_to_console("err");
+                                self::$equation['err'] = true;
                        
                                 
-			} */
+			} 
                                 
                         //$center = Equation::getCenter();
 		}
@@ -216,18 +217,9 @@ class Equation {
         $c = self::$equation['c'];
         
         
-        if (($b == 0) && ($a > $c)) {
-            self::$equation['angle'] = 0;
-        }
-        else if (($b == 0) && ($a > $c)) {
-            self::$equation['angle'] = 90 * M_PI/180;
-        /*} 
-         if ($b == 0)  {
-            return self::$equation['angle'];*/
-            
-        } else {
-            self::$equation['angle'] = atan(($c - $a - sqrt(($a - $c) * ($a - $c) + (2*$b) * (2*$b)))/(2*$b));
-        }
+        
+        self::$equation['angle'] = atan(($c - $a - sqrt(($a - $c) * ($a - $c) + (2*$b) * (2*$b)))/(2*$b));
+        
         //self::$equation['angle'] = $angle;
         
         return self::$equation['angle'];
@@ -241,7 +233,7 @@ class Equation {
         $e = self::$equation['e'];  // A02   y
         $f = self::$equation['f'];  // A00   0
         
-        $Cx = (2*$c * $d - $b * $e)/($b * $b - 4*$a * $c);
+        //$Cx = (2*$c * $d - $b * $e)/($b * $b - 4*$a * $c);
 	//var eq = this.equation;
                 
 	$denom = self::$equation['b']*self::$equation['b'] - 4*self::$equation['a']*self::$equation['c'];
@@ -308,6 +300,10 @@ class Equation {
         }
 
         return array('x' => $center['x'] + $a * cos($phi), 'y' => $center['y'] + $b * sin($phi));
+    }
+    
+    public static function getErr(){
+        return self::$equation['err'];
     }
     
     /*
