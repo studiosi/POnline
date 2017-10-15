@@ -20,16 +20,16 @@ Return:
     
     class RANSAC {
 
-    private $iter = 0;
+    private $iter = 0; // Iterator for main loop
     private $besterr = INF;
-    private $threshold = 2.5;     // Used to determine if error is good enough 
-    private $inliersRatio = 0.7;  // To accept a model, atl least 70% of points must fit 
-    private $k = 250;
+    private $threshold = 2.5;     // Used to determine if error is good enough 2.5
+    private $inliersRatio = 0.5;  // To accept a model, atl least 70% of points must fit 
+    private $k = 500; // Amount of iterations
     private $testinliers = array();
     private $testmodel; //model parameters fitted to maybeinliers
     
     private $bestfit = array();
-    private $t = 20; // How far the point can be from the ellipse border
+    private $t = 16; // How far the point can be from the ellipse border (px)
     private $d = 0;
     
     public function ransacAlg($data) {
@@ -105,7 +105,7 @@ Return:
             }
             $iter++;
             $runthreshold++;
-            if (($runthreshold > 150) || count($this->bestfit) > $this->threshold) {
+            if (($runthreshold > 50) || count($this->bestfit) > $this->threshold) {
                 return $this->bestfit;
             }
         }
