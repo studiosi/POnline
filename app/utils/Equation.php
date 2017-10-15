@@ -191,11 +191,11 @@ class Equation {
         $e = self::$equation['e'];  // A02   y
         $f = self::$equation['f'];  // A00   0
         $eq = self::$equation;
-               
-        if (abs($b) > 1e-9) {
-            self::convertToReducedEquation(); 
-        } 
+        
         // IMPLEMENT THIS WHEN b ANGLE is 0º or 90º!
+        //if (abs($b) > 1e-9) {
+        //    self::convertToReducedEquation(); 
+        //} 
         
         $numeratora = ($a * ($e * $e) + $c * ($d *$d) - $b * $d * $e + (($b * $b) - 4 * $a * $c) * $f) * ($a + $c + sqrt(($a - $c) * ($a - $c) + $b * $b));  
         $numeratorb = ($a * ($e * $e) + $c * ($d *$d) - $b * $d * $e + (($b * $b) - 4 * $a * $c) * $f) * ($a + $c - sqrt(($a - $c) * ($a - $c) + $b * $b));  
