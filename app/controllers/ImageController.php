@@ -173,8 +173,8 @@
 			} 
                         
                         $angle = Equation::getAngle();
-                         if(is_null($angle)) {
-				$angle = 0;
+                        if(is_null($angle)) {
+                            $angle = 0;
 			} 
                         
 			$pointList = FormatUtils::getJavascriptSerializedPoints($points);
@@ -229,8 +229,8 @@
 			
 		}
                 
-                // Console debuffing
-                function debug_to_console( $data ) {
+                // Console debugging
+                public function debug_to_console( $data ) {
                     $output = $data;
                     if ( is_array( $output ) )
                         $output = implode( ',', $output);
