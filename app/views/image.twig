@@ -39,7 +39,7 @@
 		
 		<div class="top-bar-right">
 			<ul class="menu">
-                            <li class="menu-text"> Click at least four times on the edge of pupil</li>
+                            <li class="menu-text"> Click at least five times on the edge of pupil</li>
                             <li  class="menu-text">Click count:</li>
                             <li  class="menu-text" id="clicks">0</li>
                             <li><a style="margin-right: 3px; visibility: hidden" id="next-button" class="button"# href="{{ url('image') }}">Next Picture</a></li>
@@ -79,7 +79,7 @@
 				var t = '{{ token }}';					
 				clickcount++;
                                 
-                                if (clickcount == 4) {
+                                if (clickcount == 5) {
                                     document.getElementById('next-button').style.visibility="visible";
                                 }
                                 
@@ -102,8 +102,6 @@
 				
 			}
                         
-                        
-
 		</script>
 		
 	</body>
