@@ -26,8 +26,6 @@ Return:
     private $inliersRatio = 0.5;  // To accept a model, atl least 70% of points must fit 
     private $k = 500; // Amount of iterations
     private $testinliers = array();
-    private $testmodel; //model parameters fitted to maybeinliers
-    
     private $bestfit = array();
     private $t = 16; // How far the point can be from the ellipse border (px)
     private $d = 0;
@@ -105,7 +103,7 @@ Return:
             }
             $iter++;
             $runthreshold++;
-            if (($runthreshold > 50) || count($this->bestfit) > $this->threshold) {
+            if (($runthreshold > 100) || count($this->bestfit) > $this->threshold) {
                 return $this->bestfit;
             }
         }
