@@ -93,16 +93,14 @@
 				ctx.moveTo(centroid[0] - 10, centroid[1]);
 				ctx.lineTo(centroid[0] + 10, centroid[1]);
 				ctx.moveTo(centroid[0], centroid[1] - 10);
-				ctx.lineTo(centroid[0], centroid[1] + 10);
-				ctx.strokeStyle="yellow";
-				ctx.stroke();	
+				ctx.lineTo(centroid[0], centroid[1] + 10); */
+				ctx.strokeStyle="red";
+				ctx.stroke(); 	
                                 
                                 ctx.beginPath();
                                 // void ctx.ellipse(x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise);
-                                // radiusX = major-axis, radiusY = minor-axis
                                 ctx.ellipse(centroid[0] , centroid[1], axisa, axisb, angle, 0, 2 * Math.PI, false);
                                 ctx.stroke();
-                                //alert("major axis: " + axisb + " minor axis: " + axisa);
 
 			};
 			imageObj.src = "/img/{{ image.filename }}";			
