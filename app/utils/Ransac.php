@@ -31,6 +31,7 @@ Return:
     private $d = 0;
     
     public function ransacAlg($data) {
+        if (count($data) == 0) return $data; 
         $this->d = 5;
         //$bestfit = array();
         $this->threshold = count($data) * $this->inliersRatio;
