@@ -31,7 +31,8 @@
 				return $app->redirect($app['url_generator']->generate('index'));
 			}
 			
-			if(empty($app['session']->get($this->NUMBER_CLICKS_SESSION))) {
+			$value = $app['session']->get($this->NUMBER_CLICKS_SESSION, -1);
+			if($value == -1) {
 				
 				$app['session']->set($this->NUMBER_CLICKS_SESSION, 0);
 				
@@ -159,30 +160,30 @@
                             }
                         } 
                         
-                        Equation::setfrompoints($points);
-                        
-                        $centroid = Equation::getCenter();		
-			
-			if(is_null($centroid)) {
-                            $centroid = array();
+                        $centroid = array('x' => 0, 'y' => 0);
+                        if (count($points) > 0) {
+                            Equation::setfrompoints($points);
+
+                            $centroid = Equation::getCenter();		
 			}
                         
-                        $axis = Equation::getAxisLength();
-                        if(is_null($axis)) {
-                            $axis = array();
-			} 
+                        $axis = [0,1];
+                        if (count($points) > 0) {
+                            $axis = Equation::getAxisLength();
+                        }
                         
-                        $angle = Equation::getAngle();
-                        if(is_null($angle)) {
-                            $angle = 0;
-			} 
+                        
+                        $angle = 0;
+                        if (count($points) > 0) {
+                            $angle = Equation::getAngle();
+                        }
                         
 			$pointList = FormatUtils::getJavascriptSerializedPoints($points);
                         $outlierList = FormatUtils::getJavascriptSerializedPoints($outlier_points);
 			$cent = FormatUtils::getJavascriptSerializedPoints(array($centroid), true);
                         $axisa = $axis[0];
                         $axisb = $axis[1];
-			
+                        
 			return $app['twig']->render('show.twig',
 			array(
 				'image' => $image,
@@ -201,34 +202,61 @@
 			$imDAO = new ImageDAO();
 			
 			$image = $imDAO->getImageById($app, $id_photo);
+			$user_points_raw = $imDAO->getAllClicksUserImage($app, $id_player, $id_photo);			
 			
-			$points = $imDAO->getAllClicksImage($app, $id_photo); // Only valid points
-			$centroid = MathUtils::calculateCentroid($points);		
+			$pointList = FormatUtils::getJavascriptSerializedPoints($user_points_raw);
 			
-			if(is_null($centroid)) {
-				
-				$centroid = array();
-				
+                        $ransac = new Ransac;
+                        $points = $ransac->ransacAlg($user_points_raw);
+                        
+                        $outlier_points = array();
+                        $j = 0;
+                        for ($i = 0; $i < count($user_points_raw); $i++) {
+                            if (!in_array($user_points_raw[$i], $points)) {
+                                $outlier_points[$j] = $user_points_raw[$i];
+                                $j++; 
+                            }
+                        } 
+                        
+                        $centroid = array('x' => 0, 'y' => 0);
+                        if (count($points) > 0) {
+                            Equation::setfrompoints($points);
+
+                            $centroid = Equation::getCenter();		
 			}
                         
+                        $axis = [0,1];
+                        if (count($points) > 0) {
+                            $axis = Equation::getAxisLength();
+                        }
+                        
+                        
+                        $angle = 0;
+                        if (count($points) > 0) {
+                            $angle = Equation::getAngle();
+                        }
+                        
+			$pointList = FormatUtils::getJavascriptSerializedPoints($points);
+                        $outlierList = FormatUtils::getJavascriptSerializedPoints($outlier_points);
 			$cent = FormatUtils::getJavascriptSerializedPoints(array($centroid), true);
-			
-			$user_points = $imDAO->getAllClicksUserImage($app, $id_player, $id_photo);			
-			
-			$pointList = FormatUtils::getJavascriptSerializedPoints($user_points);
-			
+                        $axisa = $axis[0];
+                        $axisb = $axis[1];
 			
 			return $app['twig']->render('show.twig',
 			array(
 				'image' => $image,
 				'pointList' => $pointList,
+                                'outlierList' => $outlierList,
 				'centroid' => $cent,
-				'id_player' => $id_player
-			));
-			
+                                'axisa' => $axisa,
+                                'axisb' => $axisb,
+                                'angle' => $angle,
+                                'id_player' => $id_player
+                        ));
 			
 		}
-                
+			
+		
                 // Console debugging
                 public function debug_to_console( $data ) {
                     $output = $data;
