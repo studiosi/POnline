@@ -136,19 +136,10 @@ class Equation {
 				self::$equation['f'] = $U[2][0]*$ev[0] + $U[2][1]*$ev[1] + $U[2][2]*$ev[2];
                                 self::$equation['err'] = false;
                                 //$equationstring = Equation::printEquation();
-                               // equation::getAxisLength();
 			} else {
-                                //$a1len = count($a1);
-                                //ImageController::debug_to_console("Pb with eigenvectors, length = " . count($a1));
-                                //ImageController::debug_to_console($eigVec);
-                                var_dump($a1);
-                                //ImageController::debug_to_console("err");
-                                self::$equation['err'] = true;
-                       
-                                
-			} 
-                                
-                        //$center = Equation::getCenter();
+                            self::$equation['err'] = true;
+			}
+                        //Equation::getCenter();
 		}
                 
     public static function printCoeff($x) {
