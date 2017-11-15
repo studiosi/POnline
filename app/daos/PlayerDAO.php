@@ -51,7 +51,7 @@
 			
 		}
                 
-		public function createPlayer(Application $app, $username, $password) {
+		public function createPlayer(Application $app, $username, $password, $email) {
 			
 			$f = new RandomLib\Factory();
 			$g = $f->getGenerator(new SecurityLib\Strength(SecurityLib\Strength::MEDIUM));			
@@ -61,6 +61,7 @@
 			
 			$data = array(
 				'username' => $username,
+                                'email' => $email,
 				'password' => $hash,
 				'salt' => $salt,
 				'status' => PlayerDAO::$STATUS['OPERATIONAL']			
@@ -116,8 +117,12 @@
 		
 		public function checkIfUserLoggedIn(Application $app) {
 			
-			return (!empty($app['session']->get(PlayerDAO::$SESSION_PLAYER_ID)));
 			
+			$value = $app['session']->get(PlayerDAO::$SESSION_PLAYER_ID, -1);
+			if($value == -1) {
+				return false;
+			}
+			return true;
 		}
 		
 		public function getLeaderboard(Application $app) {
