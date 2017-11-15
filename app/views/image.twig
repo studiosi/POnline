@@ -83,6 +83,10 @@
                                     document.getElementById('next-button').style.visibility="visible";
                                 }
                                 
+                                if (clickcount == 50) {
+                                    document.getElementById("next-button").click(); 
+                                }
+                                
 				var x = event.offsetX?(event.offsetX):event.pageX-document.getElementById("eye").offsetLeft;
 				var y = event.offsetY?(event.offsetY):event.pageY-document.getElementById("eye").offsetTop;	
                                 document.getElementById("clicks").innerHTML = clickcount;    
