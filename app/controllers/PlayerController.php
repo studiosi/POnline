@@ -1,9 +1,9 @@
 <?php
 
-	namespace TU\Controllers;
+namespace TU\Controllers;
 
-	use Silex\Application;
-	use Symfony\Component\HttpFoundation\Request;
+use Silex\Application;
+use Symfony\Component\HttpFoundation\Request;
 use TU\DAO\PlayerDAO;
 	
 	
@@ -20,7 +20,8 @@ use TU\DAO\PlayerDAO;
 			$username = $req->get('username');
 			$pwd = $req->get('pwd');
 			$pwd_repeat = $req->get('pwd_repeat');
-			
+			$email = $req->get('email');
+                        
 			$pdao = new PlayerDAO();
 			
 			$errors = array();			
@@ -53,6 +54,10 @@ use TU\DAO\PlayerDAO;
 				$errors[] = "Passwords do not match";
 				
 			}
+                        
+                        if (strlen($email) == 0) {
+                            $email = "";
+                        }
 			
 			// User creation / error display
 			if(count($errors) > 0) {
@@ -66,7 +71,7 @@ use TU\DAO\PlayerDAO;
 			}
 			else {
 				
-				$pdao->createPlayer($app, $username, $pwd);
+				$pdao->createPlayer($app, $username, $pwd, $email);
 				return $app->redirect($app['url_generator']->generate('index'));
 				
 			}
