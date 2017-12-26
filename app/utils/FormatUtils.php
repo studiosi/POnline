@@ -4,11 +4,24 @@
 	
 	class FormatUtils {
 		
-		public static function getFormattedPoints($points) {
+		public static function getFormattedOpePoints($points) {
 			
 			$pointList = array();
 			foreach($points as $point) {
+                            if ($point['status'] == 'OPE') {
 				$pointList[] = array( 'x' => $point['x'], 'y' => $point['y']);
+                        }
+			}
+			
+			return $pointList;
+			
+		}
+                
+                public static function getFormattedPoints($points) {
+			
+			$pointList = array();
+			foreach($points as $point) {
+                            $pointList[] = array( 'x' => $point['x'], 'y' => $point['y']);
 			}
 			
 			return $pointList;
