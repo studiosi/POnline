@@ -92,6 +92,23 @@ class ImageDAO {
 		return $app['db']->fetchAll($qb->getSQL());
 		
 	}
+        
+        // Gets player inputted points for the admin user view
+        public function getAllPlayerImages(Application $app, $id_player) {
+                $qb = $app['db']->createQueryBuilder();
+              
+                $qb->select('DISTINCT i.filename', 'i.id', 'i.n_clicks')
+                ->from('clicks', 'c')   
+                ->innerJoin('c', 'images_count', 'i', 'c.id_photo = i.id')        
+                ->where(
+
+                    $qb->expr()->eq('c.id_player', $id_player)   
+                   
+		);
+            
+		return $app['db']->fetchAll($qb->getSQL());
+		
+	}
 	
 	public function getClicksUserImage(Application $app, $id_photo, $id_player) {
 		
