@@ -11,7 +11,6 @@ class ImageDAO {
 
 		$qb = $app['db']->createQueryBuilder();
                 
-                //muuta max -> min takasin
 		$qb->select('min(n_clicks)')
 		->from('images_count');
 		
@@ -67,16 +66,19 @@ class ImageDAO {
 	public function getAllClicksImage(Application $app, $id) {
 		
 		$qb = $app['db']->createQueryBuilder();
-		
-		$qb->select('*')
-		->from('clicks')
+		$ope = "OPE";
+		$qb->select('c.id', 'c.id_photo', 'c.x', 'c.y', 'c.id_player', 'c.human_generated', 'c.distance', 'i.id', 'i.status')
+		->from('clicks', 'c')   
+                ->innerJoin('c', 'players', 'i', 'c.id_player = i.id')        
 		->where(
-			$qb->expr()->eq('id_photo', $id)		
+                    
+			$qb->expr()->eq('c.id_photo', $id)   
+                        
 		);
-		
+               
 		$points = $app['db']->fetchAll($qb->getSQL());
 		
-		return FormatUtils::getFormattedPoints($points);
+		return FormatUtils::getFormattedOpePoints($points);
 		
 	}
 	
