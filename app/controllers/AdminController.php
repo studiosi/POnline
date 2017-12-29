@@ -8,6 +8,11 @@
 	use RandomLib;
 	use SecurityLib;
 	use Symfony\Component\HttpFoundation\Request;
+        use TU\Utils\MathUtils;
+        use TU\Utils\Equation;
+        use TU\Utils\Ellipse;
+	use TU\Utils\FormatUtils;
+        use TU\Utils\Ransac;
 	
 	class AdminController {
 		
@@ -81,7 +86,59 @@
 				
 			$imDAO = new ImageDAO();
 			$images = $imDAO->getAllImages($app);
-			
+                        
+                        $x = 0;
+                        $info = array();
+                        /*
+                        $header = array('id', 'name', 'clicks');
+                        // Output CSV file with the image params
+                        $fp = fopen('/params.csv','w');
+                        //add BOM to fix UTF-8 in Excel
+                        //fputs($csv, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
+                        
+                        fputcsv($fp, $header); 
+			foreach($images as $image) {
+                            $i = 0;
+                            while ($i < 5) {
+                                // REMOVE BANNED PTS
+                                    $x = $x+1;
+
+                                $i = $i + 1;
+
+
+                                $pointsraw = $imDAO->getAllClicksImage($app, $image['id']);
+                                if (count($pointsraw) > 0) {
+                                //var_dump($pointsraw);
+                                $ransac = new Ransac;
+                                $points = $ransac->ransacAlg($pointsraw);
+
+                                $centroid = array('x' => 0, 'y' => 0);
+
+                                    Equation::setfrompoints($points);
+
+                                $centroid = Equation::getCenter();		
+
+
+                                $ellipse_params = Equation::getEllipseParams();
+
+
+                                $axis = Equation::getAxisLength();
+
+
+
+
+
+                                $angle = Equation::getAngle();
+
+                                $imcent = array_merge($image,$centroid);
+                                $imcent = array_merge($imcent,$ellipse_params);
+                                fputcsv($fp, $imcent);
+                                }
+                            }
+                        }
+                        fclose($fp);*/ 
+                        //var_dump($info);
+                        //var_dump($clicks); 
 			$pDAO = new PlayerDAO();
 			$players = $pDAO->getAllPlayers($app);
 			
@@ -89,13 +146,14 @@
 				'images' => $images,
 				'players' => $players
 			));
+                        
 				
 		}
 		
 		public function showPlayerAdminMenu(Application $app, $id) {
 			
 			$imDAO = new ImageDAO();
-			$images = $imDAO->getAllImages($app);
+			$images = $imDAO->getAllPlayerImages($app, $id);
 			
 			$pDAO = new PlayerDAO();
 			$player = $pDAO->getPlayerById($app, $id);
