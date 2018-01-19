@@ -170,4 +170,19 @@ class ImageDAO {
 		return FormatUtils::getFormattedPoints($points);
 		
 	}
+        
+        // For this we don't care if the user has been banned or not
+	public function getAllClicks(Application $app) {
+		
+		$qb = $app['db']->createQueryBuilder();
+		
+		$qb->select('*')
+		->from('clicks');
+		
+		
+		$points = $app['db']->fetchAll($qb->getSQL());
+		
+		return FormatUtils::getFormattedClicks($points);
+		
+	}
 }
