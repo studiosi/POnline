@@ -86,9 +86,10 @@
 				
 			$imDAO = new ImageDAO();
 			$images = $imDAO->getAllImages($app);
+                        $pointsraw = $imDAO->getAllClicks($app);
                         
-                        $x = 0;
-                        $info = array();
+                        //$x = 0;
+                        //$info = array();
                         /*
                         $header = array('id', 'name', 'clicks');
                         // Output CSV file with the image params
@@ -137,6 +138,24 @@
                             }
                         }
                         fclose($fp);*/ 
+                        /*
+                        $header = array('id', 'name', 'clicks');
+                        // Output CSV file with the image click params
+                        $fp = fopen('/clicks.csv','w');
+                        //add BOM to fix UTF-8 in Excel
+                        //fputs($csv, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
+                        
+                        fputcsv($fp, $header); 
+			
+
+
+                        $pointsraw = $imDAO->getAllClicks($app);
+                        foreach($pointsraw as $point) {
+                            fputcsv($fp, $point);
+                        }
+                                
+                        
+                        fclose($fp); */
                         //var_dump($info);
                         //var_dump($clicks); 
 			$pDAO = new PlayerDAO();
