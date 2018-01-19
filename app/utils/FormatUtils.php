@@ -27,6 +27,18 @@
 			return $pointList;
 			
 		}
+                
+                // Data for analysing clicks of images
+                public static function getFormattedClicks($points) {
+			
+			$pointList = array();
+			foreach($points as $point) {
+                            $pointList[] = array( 'id' => $point['id'], 'id_photo' => $point['id_photo'], 'id_player' => $point['id_player'] );
+			}
+			
+			return $pointList;
+			
+		}
 		
 		public static function getJavascriptSerializedPoints($formatted_points, $centroid = false) {			
 			
