@@ -74,27 +74,39 @@
                                 
 				pointList.forEach(function(element, index, array) {
 					ctx.beginPath();
-					ctx.arc(element[0], element[1], 1, 0, 2 * Math.PI, false);
-					ctx.fillStyle = 'red';
-					ctx.fill();
+                                        ctx.beginPath();
+					//ctx.arc(element[0], element[1], 1, 0, 2 * Math.PI, false);
+                                        ctx.moveTo(element[0] - 5, element[1]);
+                                        ctx.lineTo(element[0] + 5, element[1]);
+                                        ctx.moveTo(element[0], element[1] - 5);
+                                        ctx.lineTo(element[0], element[1] + 5); 
+					ctx.strokeStyle = 'red';
+                                        ctx.lineWidth = 3;
+					ctx.stroke();
 				});
                                 
                                 outlierList.forEach(function(element, index, array) {
-					ctx.beginPath();
+					/*ctx.beginPath();
 					ctx.arc(element[0], element[1], 1, 0, 2 * Math.PI, false);
 					ctx.fillStyle = 'blue';
-					ctx.fill();
+					ctx.fill(); */
+                                        ctx.beginPath();    
+                                        ctx.rect(element[0] - 4,element[1],8,8);
+                                        ctx.fillStyle = 'blue';
+                                        ctx.fill();
+                                        
 				});
                                 
                                
                                 
-				ctx.beginPath();
+				//ctx.beginPath();
 				ctx.beginPath();
 				ctx.moveTo(centroid[0] - 10, centroid[1]);
 				ctx.lineTo(centroid[0] + 10, centroid[1]);
 				ctx.moveTo(centroid[0], centroid[1] - 10);
-				ctx.lineTo(centroid[0], centroid[1] + 10); */
-				ctx.strokeStyle="red";
+				ctx.lineTo(centroid[0], centroid[1] + 10); 
+				ctx.strokeStyle="yellow";
+                                ctx.lineWidth = 1;
 				ctx.stroke(); 	
                                 
                                 ctx.beginPath();
