@@ -2,6 +2,7 @@
 namespace TU\Utils;
     use TU\Utils\Equation;
     use TU\Utils\Ellipse;
+    use TU\Utils\Ransac;
     use TU\controllers\ImageController;
     
     
@@ -20,8 +21,12 @@ Return:
     
     class RANSAC {
 
-    private $iter = 0; // Iterator for main loop
     private $besterr = INF;
+    /*
+     threshold, an unspecified parameter in the formal statement of the RANSAC paradigm, 
+     is used as the basis for determining that an n subset of P has been found that implies 
+     a sufficiently large consensus set to permit the algorithm to terminate.
+     */
     private $threshold = 2.5;     // Used to determine if error is good enough 2.5
     private $inliersRatio = 0.5;  // To accept a model, atl least 70% of points must fit 
     private $k = 500; // Amount of iterations
@@ -31,12 +36,14 @@ Return:
     private $d = 0;
     
     public function ransacAlg($data) {
-        if (count($data) <= 5) return $data;
+        Ransac::console_log(count($data));
+        if (count($data) < 5) return $data;
         $this->d = 5;
         //$bestfit = array();
         $this->threshold = count($data) * $this->inliersRatio;
-        $iter = 0;
+        $iter = 0; // Iterator for main loop
         while ($iter < $this->k) {
+            Ransac::console_log($iter);
             $runthreshold = 0; // Max amount of runs if the fitness doesn't get better
             $thiserr = 0;
             $alsoinliers = array();   
@@ -49,13 +56,15 @@ Return:
                     $j = $j + 1;
                 }
             }
-            
+            Ransac::console_log("Saatu eka sovitus vitonen");
             
             // Fitting ellipse
             Equation::setfrompoints($this->testinliers);
+            $finditer = 0;
             
             while (Equation::getErr() == true) {
                 $j = 0;
+                $this->testinliers = array();
                 while ($j < 5) {
                 $r = rand(0 , count($data)-1);
                     if (!in_array($data[$r], $this->testinliers)) {
@@ -64,8 +73,13 @@ Return:
                     }
                 }
                 Equation::setfrompoints($this->testinliers);
-            }
-            
+                $finditer++;
+                Ransac::console_log($finditer);
+                if ($finditer > 50) {
+                    Equation::setErr();
+                }
+            } 
+            Ransac::console_log("Saatu viisi pistetta");
             $center = Equation::getCenter();
             $axis = Equation::getAxisLength();
             
@@ -84,8 +98,6 @@ Return:
                 }
             }
             
-
-            
             //$this->threshold = 0;
             //if the number of elements in alsoinliers is > d {
             if (count($alsoinliers) > $this->d) {
@@ -93,26 +105,36 @@ Return:
                 // now test how good it is
                 //$bettermodel = Equation::setfrompoints($this->alsoinliers); // model parameters fitted to all points in maybeinliers and alsoinliers
                 $bettermodel = $alsoinliers;
-                //$thiserr = count($alsoinliers); //a measure of how well model fits these points
+                
                 if ($thiserr < $this->besterr) {
                     $runthreshold = 0;
-                //if ($thiserr > $this->besterr) {
                     $this->bestfit = $bettermodel;
                     $this->besterr = $thiserr;
                     
                 }
             }
             $iter++;
+            
             $runthreshold++;
-            if (($runthreshold > 100) || count($this->bestfit) > $this->threshold) {
+            if (($runthreshold > 100) || (count($this->bestfit) > $this->threshold)) {
+                Ransac::console_log("Poistuttu ransacista, max ilman muutosta");
                 return $this->bestfit;
             }
         }
         if (empty($this->bestfit)) $this->bestfit = $this->testinliers;
         //if (Equation::getErr() == true)
-            return $this->bestfit;
+        Ransac::console_log("Poistuttu ransacista, max iter");
+        return $this->bestfit;
        // else
           //  return $this->testinliers;
     }
+    
+    // Console debugging
+    public function console_log($data ){
+        echo '<script>';
+        echo 'console.log('. json_encode( $data ) .')';
+        echo '</script>';
+    }
+    
 
 }
