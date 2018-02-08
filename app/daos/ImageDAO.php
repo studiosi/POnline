@@ -81,6 +81,26 @@ class ImageDAO {
 		return FormatUtils::getFormattedOpePoints($points);
 		
 	}
+        
+        // For timestamps
+        public function getAllStampsUser(Application $app, $id) {
+		
+		$qb = $app['db']->createQueryBuilder();
+		$ope = "OPE";
+		$qb->select('c.id', 'c.id_photo', 'c.id_player', 'c.click_time', 'c.distance', 'i.id', 'i.status')
+		->from('clicks', 'c')   
+                ->innerJoin('c', 'players', 'i', 'c.id_player = i.id')        
+		->where(
+                    
+			$qb->expr()->eq('c.id_player', $id)   
+                        
+		);
+               
+		$points = $app['db']->fetchAll($qb->getSQL());
+		
+		return FormatUtils::getFormattedOpeStamps($points);
+		
+	}
 	
 	public function getAllImages(Application $app) {
 		
