@@ -147,7 +147,17 @@
                         
 			$image = $imDAO->getImageById($app, $id);
 			$pointsraw = $imDAO->getAllClicksImage($app, $id);
-			
+			/*
+                        // FOR TESTING SMALLER PERCENTAGES OF DATA
+                        $tmp = array();
+                        //var_dump($data);
+                        for ($bbq = 0; $bbq < count($pointsraw)*0.1; $bbq++) {
+                            $tmp[$bbq]['x'] = $pointsraw[$bbq]['x'];
+                            $tmp[$bbq]['y'] = $pointsraw[$bbq]['y'];
+                            //print_r($data[$bbq]);
+                        }
+                        $pointsraw = $tmp; */
+                        
                         $ransac = new Ransac;
                         $points = $ransac->ransacAlg($pointsraw);
                         
@@ -202,10 +212,9 @@
 			$imDAO = new ImageDAO();
 			
 			$image = $imDAO->getImageById($app, $id_photo);
-			$user_points_raw = $imDAO->getAllClicksUserImage($app, $id_player, $id_photo);			
-			
+			$user_points_raw = $imDAO->getAllClicksUserImage($app, $id_player, $id_photo);		
 			$pointList = FormatUtils::getJavascriptSerializedPoints($user_points_raw);
-			
+			    
                         $ransac = new Ransac;
                         $points = $ransac->ransacAlg($user_points_raw);
                         
