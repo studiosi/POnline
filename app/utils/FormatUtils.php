@@ -17,6 +17,20 @@
 			
 		}
                 
+                // For the timestamps function
+                public static function getFormattedOpeStamps($points) {
+			
+			$pointList = array();
+			foreach($points as $point) {
+                            if ($point['status'] == 'OPE') {
+				$pointList[] = array('pid' => $point['id_player'], 'ts' => $point['click_time']);
+                        }
+			}
+			
+			return $pointList;
+			
+		}
+                
                 public static function getFormattedPoints($points) {
 			
 			$pointList = array();
