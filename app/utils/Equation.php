@@ -122,6 +122,8 @@ class Equation {
                         });
                         
 			$a1 = array_reduce($a1filter, function($p,$c) {
+                            // ROUNDING TO 13 DECIMALS FIX IN TEST?!?!?!?!?!?!!?!??!?!?!?!?!?!?!??!?!?!?!?!?!!?
+                            // return $p['cond'] < round($c['cond'],13) ? $p : $c;   DIDNT FIX
                             return $p['cond'] < $c['cond'] ? $p : $c;   
 			}, array('cond' => INF, 'err' => true));
                         
@@ -137,6 +139,13 @@ class Equation {
                                 self::$equation['err'] = false;
                                 //$equationstring = Equation::printEquation();
 			} else {
+                          /*  $ev = $a1['ev'];
+                            self::$equation['a'] = $ev[0];
+                            self::$equation['b'] = $ev[1];
+                            self::$equation['c'] = $ev[2];
+                            self::$equation['d'] = $U[0][0]*$ev[0] + $U[0][1]*$ev[1] + $U[0][2]*$ev[2];
+                            self::$equation['e'] = $U[1][0]*$ev[0] + $U[1][1]*$ev[1] + $U[1][2]*$ev[2];
+                            self::$equation['f'] = $U[2][0]*$ev[0] + $U[2][1]*$ev[1] + $U[2][2]*$ev[2]; */
                             self::$equation['err'] = true;
 			}
                         //Equation::getCenter();
@@ -294,6 +303,14 @@ class Equation {
     
     public static function getErr(){
         return self::$equation['err'];
+    }
+    
+    public static function setErr(){
+        $equation['err'] = false;
+    }
+        
+    public static function getEllipseParams(){
+        return self::$equation;
     }
     
     /*
