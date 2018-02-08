@@ -21,6 +21,21 @@
 	
 	$app->get('/admin/menu', 'TU\Controllers\AdminController::showMainMenu')
 	->bind('admin_menu');
+        
+        $app->get('/admin/csv', 'TU\Controllers\AdminController::getPercentageCSV')
+	->bind('admin_csv');
+        
+        $app->get('/admin/csv2', 'TU\Controllers\AdminController::getNClicksFromImg')
+	->bind('admin_csv2');
+        
+        $app->get('/admin/csv3', 'TU\Controllers\AdminController::getUserClickAmount')
+	->bind('admin_csv3');
+        
+        $app->get('/admin/csv4', 'TU\Controllers\AdminController::getConcurrency')
+	->bind('admin_csv4');
+        
+        $app->get('/admin/csv5', 'TU\Controllers\AdminController::getTimestampsCSV')
+	->bind('admin_csv5');
 	
 	$app->get('/admin/see/{id}', 'TU\Controllers\ImageController::showPoints')
 	->bind('admin_show');
@@ -31,3 +46,4 @@
 	$app->get('/admin/player/control/{id_player}/{id_photo}', 'TU\Controllers\ImageController::showPlayerPoints')
 	->bind('player_points');
 	
+        
