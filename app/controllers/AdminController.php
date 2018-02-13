@@ -86,102 +86,54 @@
             $imDAO = new ImageDAO();
             $images = $imDAO->getAllImages($app);
 
-            
-            
-            $h = 0;
-            $header = array('id', 'name', 'clicks');
-                // Output CSV file with the image params
-            $fileName = "D:\params.csv";
-            //add BOM to fix UTF-8 in Excel
-            //fputs($csv, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
-
-            //fputcsv($fp, $header); 
-
-            $imcent = array();
-
-
-
-            //$x = 0;
-            //$info = array();
-
+            $filter = 1; // Percentage of points to get    
+            $array_len = 0;    
             $fp = fopen('/params.csv','w');
-            foreach($images as $image) {
-                $j = 0;
+            
+            foreach($images as $image) {   
+                //if ($image['id'] == 298) {
+                $pointsraw_unfiltered = $imDAO->getAllClicksImage($app, $image['id']);
+                $pointsraw_tmp = array_unique($pointsraw_unfiltered,SORT_REGULAR);
+                $pointsraw = array_values($pointsraw_tmp);
+                shuffle($pointsraw);    
+                //$n = count($pointsraw);
+                /*
+                $chunked1 = array_slice($pointsraw, 0, $n / 2);
+                $chunked2 = array_slice($pointsraw, $n / 2);
+
                 $i = 0;
-
-                $pointsraw = $imDAO->getAllClicksImage($app, $image['id']);
-                if ($image['id'] > 0) {
-                $n = count($pointsraw);
-                $tmp = array();
-                shuffle($pointsraw);
-                for ($bbq = 0; $bbq < $n; $bbq++) {
-                    $tmp[$bbq]['x'] = $pointsraw[$bbq]['x'];
-                    $tmp[$bbq]['y'] = $pointsraw[$bbq]['y'];
-                }
-                $pointsraw = $tmp; 
-
+                $array_len = min(count($chunked1), count($chunked2));
+                $len = ceil(max(5, $array_len*$filter));
+                $tmp1 = array_slice($chunked1, 0, $len);
+                $tmp2 = array_slice($chunked2, 0, $len);
+                */
+                $i = 0;
                 while ($i < 5) {
-                    // REMOVE BANNED PTS
-                        //$x = $x+1;
+                    //shuffle($tmp1); 
+                    $ransac = new Ransac;
+                    $points = $ransac->ransacAlg($pointsraw);
 
-                    $i = $i + 1;
-
-                    if (count($pointsraw) > 0) {
-                        $ransac = new Ransac;
-                        $points = $ransac->ransacAlg($pointsraw);
-
-                        $centroid = array('x' => 0, 'y' => 0);
-
-                            Equation::setfrompoints($points);
-
-                        $centroid = Equation::getCenter();		
-
-
-                        //$ellipse_params = Equation::getEllipseParams();
-
-
-                        //$axis = Equation::getAxisLength();
-
-                        //$angle = Equation::getAngle();
-                        if (($centroid['x'] > 0) && ($centroid['y'] > 0)) {
-                            $tmp2 = array_merge($image,$centroid);
-                            //$imcent = array_merge($tmp2,$ellipse_params);
-                            //$imcent = array_merge($x,$imcent);
-                            //$j = $j+1;
-                            fputcsv($fp, $tmp2);
-
-                        } else {
-                            $i = $i -1;
-                        }
-
+                    $centroid = array('x' => 0, 'y' => 0);
+                    Equation::setfrompoints($points);
+                    $centroid = Equation::getCenter();		
+                    //$ellipse_params = Equation::getEllipseParams();
+                    //$axis = Equation::getAxisLength();
+                    //$angle = Equation::getAngle();
+                    
+                    if (($centroid['x'] >= 0) && ($centroid['y'] >= 0)) {
+                        $temp1 = array_merge($image,$centroid);
+                        //$imcent = array_merge($tmp2,$ellipse_params);
+                        //$imcent = array_merge($x,$imcent);
+                        //$j = $j+1;
+                        fputcsv($fp, $temp1);
+                        $i = $i + 1;
                     }
                 }
-
-                //$j = $j+1;
-                }
+                    
+                    
             }
-            /*
-            $current = file_get_contents($fileName);
-            foreach($imcent as $im) {
-                foreach($im as $title => $info) {
-                    $current .= $info . ',';
-                }
-                $current .= PHP_EOL;
-            }
-            file_put_contents($fileName, $current);
-            */   
-
             fclose($fp);
-                
-          
-            
-            /*$fp = fopen('/params.csv','w');
-            
-            foreach ($imcent as $im) {
-                fputcsv($fp, $im);
-            }
-            fclose($fp);*/
-            
+             
             return $app['twig']->render('csv.twig', array(
                     
             ));
@@ -254,66 +206,38 @@
             $imDAO = new ImageDAO();
             $images = $imDAO->getAllImages($app);
 
-            $h = 0;
-           // $header = array('id', 'name', 'clicks');
-                // Output CSV file with the image params
-            //$fileName = "D:\params.csv";
-            //add BOM to fix UTF-8 in Excel
-            //fputs($csv, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
-
-            //fputcsv($fp, $header); 
-
-            $imcent = array();
             $filter = 0.2; // Percentage of points from 50% to get    
-            $iter = 0;
-
-            //$x = 0;
-            //$info = array();
-            echo("menoks");
-            var_dump("menoks");
-            Ransac::console_log("Alotus");
+            $array_len = 0;    
             $fp = fopen('/params.csv','w');
-            for ($iter = 0; $iter < 2; $iter++) {
+            
             foreach($images as $image) {   
-                // 465
-                //if (($image['id'] > 297) && ($image['id'] < 299)) {
-                if ($image['id'] == 298) {
-                //    Ransac::console_log( $image['id'] );
-                $pointsraw = $imDAO->getAllClicksImage($app, $image['id']);
-                $n = count($pointsraw);
-                $half = $n/2;
-                $tmp = array();
+                //if ($image['id'] == 298) {
+ 
+                $pointsraw_unfiltered = $imDAO->getAllClicksImage($app, $image['id']);
+                $pointsraw_tmp = array_unique($pointsraw_unfiltered,SORT_REGULAR);
+                $pointsraw = array_values($pointsraw_tmp);
                 shuffle($pointsraw);    
-
+                $n = count($pointsraw);
                 $chunked1 = array_slice($pointsraw, 0, $n / 2);
                 $chunked2 = array_slice($pointsraw, $n / 2);
+               
                 
-                //list($chunked1, $chunked2) = array_chunk($pointsraw, ceil($n/2), true);
                     $j = 0;
                     $i = 0;
-                    if ($iter == 0) {
-                        for ($bbq = 0; $bbq < count($chunked1)*$filter; $bbq++) {
-                            $tmp[$bbq]['x'] = $chunked1[$bbq]['x'];
-                            $tmp[$bbq]['y'] = $chunked1[$bbq]['y'];
-                        }
-                    }
-                    if ($iter == 1) {
-                        for ($bbq = 0; $bbq < count($chunked2)*$filter; $bbq++) {
-                            $tmp[$bbq]['x'] = $chunked2[$bbq]['x'];
-                            $tmp[$bbq]['y'] = $chunked2[$bbq]['y'];
-                        }
-                    }
-                    $pointsraw = $tmp; 
-                    var_dump($pointsraw);
+                    $x = 0;
+                    $array_len = min(count($chunked1), count($chunked2));
+                    //var_dump($array_len);
+                    // At least 5 pts
+                    $len = ceil(max(5, $array_len*$filter));
+                    //print($len);
+                    //var_dump($len);
+                    $tmp1 = array_slice($chunked1, 0, $len);
+                    $tmp2 = array_slice($chunked2, 0, $len);
+
                     while ($i < 5) {
-                        // REMOVE BANNED PTS
-                            //$x = $x+1;
-
-                        $i = $i + 1;
-
-                        if (count($pointsraw) > 0) {
+                       shuffle($tmp1); 
                             $ransac = new Ransac;
-                            $points = $ransac->ransacAlg($pointsraw);
+                            $points = $ransac->ransacAlg($tmp1);
 
                             $centroid = array('x' => 0, 'y' => 0);
 
@@ -328,27 +252,128 @@
                             //$axis = Equation::getAxisLength();
 
                             //$angle = Equation::getAngle();
-                            if (($centroid['x'] > 0) && ($centroid['y'] > 0)) {
-                                $tmp2 = array_merge($image,$centroid);
+                            if (($centroid['x'] >= 0) && ($centroid['y'] >= 0)) {
+                                $temp1 = array_merge($image,$centroid);
                                 //$imcent = array_merge($tmp2,$ellipse_params);
                                 //$imcent = array_merge($x,$imcent);
                                 //$j = $j+1;
-                                fputcsv($fp, $tmp2);
-
-                            } else {
-                                $i = $i -1;
+                                fputcsv($fp, $temp1);
+                                $i = $i + 1;
                             }
-
-                        }
                     }
-                    }
-                }
-                //$j = $j+1;
-                }
+                    
+                    while ($x < 5) {
+                        shuffle($tmp2);     
+                            $ransac = new Ransac;
+                            $points = $ransac->ransacAlg($tmp2);
 
+                            $centroid = array('x' => 0, 'y' => 0);
+
+                            Equation::setfrompoints($points);
+
+                            $centroid = Equation::getCenter();		
+
+                            //$ellipse_params = Equation::getEllipseParams();
+                            //$axis = Equation::getAxisLength();
+                            //$angle = Equation::getAngle();
+                            if (($centroid['x'] >= 0) && ($centroid['y'] >= 0)) {
+                                $temp2 = array_merge($image,$centroid);
+                                fputcsv($fp, $temp2);
+                                $x = $x + 1;
+
+                            } 
+                    //}               
+                    }  
+            }
             fclose($fp);
              
             return $app['twig']->render('csv4.twig', array(
+                    
+            ));
+        }
+        
+        public function get5ToNAll(Application $app) {
+            $imDAO = new ImageDAO();
+            $images = $imDAO->getAllImages($app);
+
+           // $header = array('id', 'name', 'clicks');
+                // Output CSV file with the image params
+            //$fileName = "D:\params.csv";
+            //add BOM to fix UTF-8 in Excel
+            //fputs($csv, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
+
+            //fputcsv($fp, $header); 
+ 
+            $array_len = 0;    
+            $fp = fopen('/improvement.csv','w');
+            
+            for ($iy = 5; $y <= 142; $y++) {
+                foreach($images as $image) {   
+                    // GET IMAGEs THAT HAS $y clicks, divide with left amount of img count
+                    
+                    $pointsraw_unfiltered = $imDAO->getAllClicksImage($app, $image['id']);
+                    // WE CANT REORDER PTS, TAKE WITH THE ORDER THEY ARE TAKEN
+                    $bbq = 0;
+                    $pointsraw_tmp = array_unique($pointsraw_unfiltered,SORT_REGULAR);
+                    $pointsraw = array_values($pointsraw_tmp);
+                    shuffle($pointsraw);    
+                    $n = count($pointsraw);
+                    $chunked1 = array_slice($pointsraw, 0, $y);
+                    
+                
+                    $j = 0;
+                    $i = 0;
+                    $x = 0;
+                    /*
+                    $array_len = min(count($chunked1), count($chunked2));
+                    //var_dump($array_len);
+                    $len = max(5, ceil($array_len*$filter));
+                    //print($len);
+                    //var_dump($len);
+                    for ($bbq = 0; $bbq < $len; $bbq++) {
+                        $tmp1[$bbq]['x'] = $chunked1[$bbq]['x'];
+                        $tmp1[$bbq]['y'] = $chunked1[$bbq]['y'];
+                    }
+                    
+                    
+                    for ($bbq = 0; $bbq < $len; $bbq++) {
+                        $tmp2[$bbq]['x'] = $chunked2[$bbq]['x'];
+                        $tmp2[$bbq]['y'] = $chunked2[$bbq]['y'];
+                    } */
+                    while ($i < 5) {
+                       
+                        $ransac = new Ransac;
+                        $points = $ransac->ransacAlg($tmp1);
+
+                        $centroid = array('x' => 0, 'y' => 0);
+
+                        Equation::setfrompoints($points);
+
+                        $centroid = Equation::getCenter();		
+
+
+                        //$ellipse_params = Equation::getEllipseParams();
+
+
+                        //$axis = Equation::getAxisLength();
+
+                        //$angle = Equation::getAngle();
+                        if (($centroid['x'] > 0) && ($centroid['y'] > 0)) {
+                            $temp1 = array_merge($image,$centroid);
+                            //$imcent = array_merge($tmp2,$ellipse_params);
+                            //$imcent = array_merge($x,$imcent);
+                            //$j = $j+1;
+                            fputcsv($fp, $temp1);
+                            $i = $i + 1;
+                        }
+    
+                    }   
+                }
+            }
+
+            fclose($fp);
+             
+            return $app['twig']->render('csv6.twig', array(
                     
             ));
         }
