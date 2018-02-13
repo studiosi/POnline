@@ -36,7 +36,10 @@
         
         $app->get('/admin/csv5', 'TU\Controllers\AdminController::getTimestampsCSV')
 	->bind('admin_csv5');
-	
+        
+        $app->get('/admin/csv6', 'TU\Controllers\AdminController::get5ToNAll')
+	->bind('admin_csv6');
+            
 	$app->get('/admin/see/{id}', 'TU\Controllers\ImageController::showPoints')
 	->bind('admin_show');
 	
