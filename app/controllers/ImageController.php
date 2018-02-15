@@ -146,17 +146,30 @@
 			$imDAO = new ImageDAO();
                         
 			$image = $imDAO->getImageById($app, $id);
-			$pointsraw = $imDAO->getAllClicksImage($app, $id);
+			//$pointsraw = $imDAO->getAllClicksImage($app, $id);
 			/*
-                        // FOR TESTING SMALLER PERCENTAGES OF DATA
-                        $tmp = array();
-                        //var_dump($data);
-                        for ($bbq = 0; $bbq < count($pointsraw)*0.1; $bbq++) {
-                            $tmp[$bbq]['x'] = $pointsraw[$bbq]['x'];
-                            $tmp[$bbq]['y'] = $pointsraw[$bbq]['y'];
-                            //print_r($data[$bbq]);
-                        }
-                        $pointsraw = $tmp; */
+                        $pointsraw = $tmp; 
+                         */
+                        
+                        /* for testing */
+                        $pointsraw_unfiltered = $imDAO->getAllClicksImage($app, $id);
+                        $filter = 1;
+                        $pointsraw_tmp = array_unique($pointsraw_unfiltered,SORT_REGULAR);
+                        $pointsraw = array_values($pointsraw_tmp);
+                        shuffle($pointsraw);    
+                        $n = count($pointsraw);
+                        $chunked1 = array_slice($pointsraw, 0, $n / 2);
+                        $chunked2 = array_slice($pointsraw, $n / 2);
+                        $array_len = min(count($chunked1), count($chunked2));
+                        var_dump(count($chunked1));
+                        $len = ceil(max(5, $array_len*$filter));
+                        //$len = 5;
+                        //var_dump($len);
+                        $tmp1 = array_slice($chunked1, 0, $len);
+                        $tmp2 = array_slice($chunked2, 0, $len);
+                        $pointsraw = $tmp1;
+                        /* Testing end */
+                        //var_dump($pointsraw);
                         
                         $ransac = new Ransac;
                         $points = $ransac->ransacAlg($pointsraw);
