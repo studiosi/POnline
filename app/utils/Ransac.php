@@ -28,7 +28,7 @@ Return:
      a sufficiently large consensus set to permit the algorithm to terminate.
      */
     private $threshold = 2.5;     // Used to determine if error is good enough 2.5
-    private $inliersRatio = 0.5;  // To accept a model, atl least 70% of points must fit 
+    private $inliersRatio = 0.5;  // To accept a model, atl least x% of points must fit 
     private $k = 500; // Amount of iterations
     private $testinliers = array();
     private $bestfit = array();
