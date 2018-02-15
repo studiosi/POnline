@@ -39,7 +39,10 @@
         
         $app->get('/admin/csv6', 'TU\Controllers\AdminController::get5ToNAll')
 	->bind('admin_csv6');
-            
+        
+        $app->get('/admin/csv7', 'TU\Controllers\AdminController::getImgCountsForImprovement')
+        ->bind('admin_csv7');
+               
 	$app->get('/admin/see/{id}', 'TU\Controllers\ImageController::showPoints')
 	->bind('admin_show');
 	
