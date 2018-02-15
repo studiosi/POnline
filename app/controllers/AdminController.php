@@ -309,43 +309,48 @@
             
             /* IMG amount count array for each iteration 142-5=137 */
             /* Filled with zeros */
-            $imcounts = array_fill(0, 137, 0);
+            //$imcounts = array_fill(0, 137, 0);
             
-            for ($i = 5; $i <= 142; $i++) {
+            for ($i = 1; $i <= 142; $i++) {
                 foreach($images as $image) {   
                     // GET IMAGEs THAT HAS $y clicks
                     
                     $pointsraw_unfiltered = $imDAO->getAllClicksImage($app, $image['id']);
                     
-                    if ($pointsraw_unfiltered > $i) {
+                    if (count($pointsraw_unfiltered) > $i) {
                         /* Increase according image count array*/
-                        $imcounts[$i-5]++;
+                        //$imcounts[$i-5]++;
                         // WE CANT REORDER PTS, TAKE WITH THE ORDER THEY ARE TAKEN
                         $pointsraw_tmp = array_unique($pointsraw_unfiltered,SORT_REGULAR);
                         $pointsraw = array_values($pointsraw_tmp);
                         shuffle($pointsraw);    
                         $n = count($pointsraw);
-                        $chunked = array_slice($pointsraw, 0, $y);
+                        $chunked = array_slice($pointsraw, 0, $i);
 
                         $j = 0;
                         while ($j < 5) {
-
-                            $ransac = new Ransac;
-                            $points = $ransac->ransacAlg($chunked);
-
                             $centroid = array('x' => 0, 'y' => 0);
-
-                            Equation::setfrompoints($points);
-                            $centroid = Equation::getCenter();	
                             
-                            if (($centroid['x'] > 0) && ($centroid['y'] > 0)) {
+                            if ($i > 5 ) { 
+                                $ransac = new Ransac;
+                                $points = $ransac->ransacAlg($chunked);
+                                Equation::setfrompoints($points);
+                                $centroid = Equation::getCenter();
+                                if (($centroid['x'] > 0) && ($centroid['y'] > 0)) {
+                                    $temp1 = array_merge($image,$centroid);
+                                    fputcsv($fp, $temp1);
+                                    $j = $j + 1;
+                                }
+                            }
+                            else {
+                                Equation::setfrompoints($chunked);
+                                $centroid = Equation::getCenter();
                                 $temp1 = array_merge($image,$centroid);
-                                //$imcent = array_merge($tmp2,$ellipse_params);
-                                //$imcent = array_merge($x,$imcent);
-                                //$j = $j+1;
                                 fputcsv($fp, $temp1);
                                 $j = $j + 1;
                             }
+                            
+                            
                         }
                     } 
                     /* If less than $i click count: input 5 times 0,0 as centroid */
@@ -367,6 +372,45 @@
                     
             ));
         }
+        
+        
+        public function getImgCountsForImprovement(Application $app) {
+            $imDAO = new ImageDAO();
+            $images = $imDAO->getAllImages($app);
+
+           // $header = array('id', 'name', 'clicks');
+                // Output CSV file with the image params
+            //$fileName = "D:\params.csv";
+            //add BOM to fix UTF-8 in Excel
+            //fputs($csv, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
+
+            //fputcsv($fp, $header); 
+ 
+            $array_len = 0;    
+            $fp = fopen('/imgcountforclicks.csv','w');
+            
+            /* IMG amount count array for each iteration 142-5=137 */
+            /* Filled with zeros */
+            $imcounts = array_fill(0, 138, 0);
+            
+            for ($i = 5; $i <= 142; $i++) {
+                foreach($images as $image) {   
+                    // GET IMAGEs THAT HAS $y clicks
+                    $pointsraw_unfiltered = $imDAO->getAllClicksImage($app, $image['id']);
+                    if (count($pointsraw_unfiltered) > $i) {
+                        /* Increase according image count array*/
+                        $imcounts[$i-5]++;
+                    }
+                }
+            }
+            fputcsv($fp, $imcounts);
+            fclose($fp);
+             
+            return $app['twig']->render('csv7.twig', array(
+                    
+            ));
+        }
+        
         
         public function getUserClickAmount(Application $app) {
             
