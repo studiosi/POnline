@@ -50,6 +50,7 @@ class Equation {
 			$equation['e'] = $e;
 			$equation['f'] = $f;
                         $equation['angle'];
+                        $equation['err'] = false;
                         
 		}
 		
@@ -139,13 +140,20 @@ class Equation {
                                 self::$equation['err'] = false;
                                 //$equationstring = Equation::printEquation();
 			} else {
-                          /*  $ev = $a1['ev'];
-                            self::$equation['a'] = $ev[0];
+                            //$ev = $a1['ev'];
+                            //echo("err, inf val!");
+                           /* self::$equation['a'] = $ev[0];
                             self::$equation['b'] = $ev[1];
                             self::$equation['c'] = $ev[2];
                             self::$equation['d'] = $U[0][0]*$ev[0] + $U[0][1]*$ev[1] + $U[0][2]*$ev[2];
                             self::$equation['e'] = $U[1][0]*$ev[0] + $U[1][1]*$ev[1] + $U[1][2]*$ev[2];
-                            self::$equation['f'] = $U[2][0]*$ev[0] + $U[2][1]*$ev[1] + $U[2][2]*$ev[2]; */
+                            self::$equation['f'] = $U[2][0]*$ev[0] + $U[2][1]*$ev[1] + $U[2][2]*$ev[2]; 
+                            self::$equation['a'] = 0.00000001; 
+                            self::$equation['b'] = 0.00000001; 
+                            self::$equation['c'] = 0.00000001; 
+                            self::$equation['d'] = 0.00000001; 
+                            self::$equation['e'] = 0.00000001; 
+                            self::$equation['f'] = 0.00000001; */
                             self::$equation['err'] = true;
 			}
                         //Equation::getCenter();
