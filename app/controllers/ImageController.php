@@ -151,7 +151,7 @@
                         $pointsraw = $tmp; 
                          */
                         
-                        /* for testing */
+                        /* for testing 
                         $pointsraw_unfiltered = $imDAO->getAllClicksImage($app, $id);
                         $filter = 1;
                         $pointsraw_tmp = array_unique($pointsraw_unfiltered,SORT_REGULAR);
@@ -167,7 +167,7 @@
                         //var_dump($len);
                         $tmp1 = array_slice($chunked1, 0, $len);
                         $tmp2 = array_slice($chunked2, 0, $len);
-                        $pointsraw = $tmp1;
+                        $pointsraw = $tmp1; */
                         /* Testing end */
                         //var_dump($pointsraw);
                         
