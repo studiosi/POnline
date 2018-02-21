@@ -36,7 +36,9 @@ Return:
     private $d = 0;
     
     public function ransacAlg($data) {
-        //if (count($data) < 5) return $data;
+        // We cannot fit less than five points, and exactly five points doesn't 
+        // yield in any change on the ellipse
+        if (count($data) < 6) return $data;
         $this->d = 5;
         //$bestfit = array();
         $this->threshold = count($data) * $this->inliersRatio;
