@@ -81,7 +81,10 @@
             }
 
         }
-
+        
+        /* Get data for every image running RANSAC five times for each image
+         * with the given percentage of data points' number for each image.
+         */
         public function getPercentageCSV(Application $app) {
             $imDAO = new ImageDAO();
             $images = $imDAO->getAllImages($app);
@@ -90,41 +93,25 @@
             $array_len = 0;    
             $fp = fopen('/params.csv','w');
             
+            // For every image
             foreach($images as $image) {   
-                //if ($image['id'] == 298) {
                 $pointsraw_unfiltered = $imDAO->getAllClicksImage($app, $image['id']);
                 $pointsraw_tmp = array_unique($pointsraw_unfiltered,SORT_REGULAR);
                 $pointsraw = array_values($pointsraw_tmp);
                 shuffle($pointsraw);    
-                //$n = count($pointsraw);
-                /*
-                $chunked1 = array_slice($pointsraw, 0, $n / 2);
-                $chunked2 = array_slice($pointsraw, $n / 2);
 
                 $i = 0;
-                $array_len = min(count($chunked1), count($chunked2));
-                $len = ceil(max(5, $array_len*$filter));
-                $tmp1 = array_slice($chunked1, 0, $len);
-                $tmp2 = array_slice($chunked2, 0, $len);
-                */
-                $i = 0;
+                // Run RANSAC five times
                 while ($i < 5) {
-                    //shuffle($tmp1); 
                     $ransac = new Ransac;
                     $points = $ransac->ransacAlg($pointsraw);
 
                     $centroid = array('x' => 0, 'y' => 0);
                     Equation::setfrompoints($points);
-                    $centroid = Equation::getCenter();		
-                    //$ellipse_params = Equation::getEllipseParams();
-                    //$axis = Equation::getAxisLength();
-                    //$angle = Equation::getAngle();
+                    $centroid = Equation::getCenter();	
                     
                     if (($centroid['x'] >= 0) && ($centroid['y'] >= 0)) {
                         $temp1 = array_merge($image,$centroid);
-                        //$imcent = array_merge($tmp2,$ellipse_params);
-                        //$imcent = array_merge($x,$imcent);
-                        //$j = $j+1;
                         fputcsv($fp, $temp1);
                         $i = $i + 1;
                     }
@@ -150,7 +137,6 @@
             $fp = fopen('/params.csv','w');
             $j = 0;
             
-            // REMOVE BANNED PTS ? UNDONE ?
             $pointsraw = $imDAO->getAllClicksImage($app, $image['id']);
             $n = count($pointsraw);
             shuffle($pointsraw);
@@ -201,18 +187,21 @@
             ));
         }
         
-        // CHANGE NAME TO CONSISTENCY
-        public function getConcurrency(Application $app) {
+        /* For getting the consistency data of two equal length arrays.
+        Divides the data of each image into 50% amount arrays and runs RANSAC
+        five times for both arrays of every image */
+        public function getConsistency(Application $app) {
             $imDAO = new ImageDAO();
             $images = $imDAO->getAllImages($app);
 
-            $filter = 0.2; // Percentage of points from 50% to get    
+            $filter = 0.2; // Percentage of points from the two equal arrays to get    
             $array_len = 0;    
-            $fp = fopen('/params.csv','w');
+            $fp = fopen('/params.csv','w'); // File where to write the .csv results
             
+            // For every image in the db
             foreach($images as $image) {   
-                //if ($image['id'] == 298) {
- 
+                // Get raw points and Slice the array into two equal length arrays 
+                // for testing consistency
                 $pointsraw_unfiltered = $imDAO->getAllClicksImage($app, $image['id']);
                 $pointsraw_tmp = array_unique($pointsraw_unfiltered,SORT_REGULAR);
                 $pointsraw = array_values($pointsraw_tmp);
@@ -222,68 +211,69 @@
                 $chunked2 = array_slice($pointsraw, $n / 2);
                
                 
-                    $j = 0;
-                    $i = 0;
-                    $x = 0;
-                    $array_len = min(count($chunked1), count($chunked2));
-                    //var_dump($array_len);
-                    // At least 5 pts
-                    $len = ceil(max(5, $array_len*$filter));
-                    //print($len);
-                    //var_dump($len);
-                    $tmp1 = array_slice($chunked1, 0, $len);
-                    $tmp2 = array_slice($chunked2, 0, $len);
+                $j = 0;
+                $i = 0;
+                $x = 0;
+                $array_len = min(count($chunked1), count($chunked2));
+                // At least 5 pts
+                $len = ceil(max(5, $array_len*$filter));
 
-                    while ($i < 5) {
-                       shuffle($tmp1); 
-                            $ransac = new Ransac;
-                            $points = $ransac->ransacAlg($tmp1);
+                // the percentage of pts to get according to filter value
+                // 1 as a filter divides the array into equal of two 50% arrays
+                $tmp1 = array_slice($chunked1, 0, $len);
+                $tmp2 = array_slice($chunked2, 0, $len);
 
-                            $centroid = array('x' => 0, 'y' => 0);
+                // Fit RANSAC five times and store results for first arr
+                while ($i < 5) {
+                    shuffle($tmp1); 
+                    $ransac = new Ransac;
+                    $points = $ransac->ransacAlg($tmp1);
 
-                            Equation::setfrompoints($points);
+                    $centroid = array('x' => 0, 'y' => 0);
 
-                            $centroid = Equation::getCenter();		
-
-
-                            //$ellipse_params = Equation::getEllipseParams();
-
-
-                            //$axis = Equation::getAxisLength();
-
-                            //$angle = Equation::getAngle();
-                            if (($centroid['x'] >= 0) && ($centroid['y'] >= 0)) {
-                                $temp1 = array_merge($image,$centroid);
-                                //$imcent = array_merge($tmp2,$ellipse_params);
-                                //$imcent = array_merge($x,$imcent);
-                                //$j = $j+1;
-                                fputcsv($fp, $temp1);
-                                $i = $i + 1;
-                            }
-                    }
+                    // Calculate ellipse's params
+                    Equation::setfrompoints($points);
+                    // Get the center of the ellipse
+                    $centroid = Equation::getCenter();		
                     
-                    while ($x < 5) {
-                        shuffle($tmp2);     
-                            $ransac = new Ransac;
-                            $points = $ransac->ransacAlg($tmp2);
+                    /* Uncomment if ellipse params are needed too
+                    $ellipse_params = Equation::getEllipseParams();
+                    $axis = Equation::getAxisLength(); */
 
-                            $centroid = array('x' => 0, 'y' => 0);
+                    // Pixel coordinates have to be positive
+                    if (($centroid['x'] >= 0) && ($centroid['y'] >= 0)) {
+                        $temp1 = array_merge($image,$centroid);
+                        // store result into csv
+                        fputcsv($fp, $temp1);
+                        $i = $i + 1;
+                    }
+                }
+                // Fit RANSAC five times and store results for second arr    
+                while ($x < 5) {
+                    shuffle($tmp2);     
+                    $ransac = new Ransac;
+                    $points = $ransac->ransacAlg($tmp2);
 
-                            Equation::setfrompoints($points);
+                    $centroid = array('x' => 0, 'y' => 0);
+                    // Calculate ellipse's params
+                    Equation::setfrompoints($points);
+                    // Get the center of the ellipse
+                    $centroid = Equation::getCenter();	
+                    
+                    /* Uncomment if ellipse params are needed too
+                    $ellipse_params = Equation::getEllipseParams();
+                    $axis = Equation::getAxisLength(); */
 
-                            $centroid = Equation::getCenter();		
+                    // Pixel coordinates have to be positive
+                    if (($centroid['x'] >= 0) && ($centroid['y'] >= 0)) {
+                        $temp2 = array_merge($image,$centroid);
+                        // store result into csv
+                        fputcsv($fp, $temp2);
+                        $x = $x + 1;
 
-                            //$ellipse_params = Equation::getEllipseParams();
-                            //$axis = Equation::getAxisLength();
-                            //$angle = Equation::getAngle();
-                            if (($centroid['x'] >= 0) && ($centroid['y'] >= 0)) {
-                                $temp2 = array_merge($image,$centroid);
-                                fputcsv($fp, $temp2);
-                                $x = $x + 1;
-
-                            } 
-                    //}               
-                    }  
+                    } 
+                             
+                }  
             }
             fclose($fp);
              
@@ -292,45 +282,41 @@
             ));
         }
         
+        
+        /* For testing how the accuracy of RANSAC changes when each image is run
+         * from 5 clicks to 143 clicks. If there isn't image with the current
+         * loop's iteration value, it's skipped. Thats why we 
+         * need the getImgCountsForImprovement function to get according amount
+         * of points for each click count of images */
         public function get5ToNAll(Application $app) {
             $imDAO = new ImageDAO();
             $images = $imDAO->getAllImages($app);
-
-           // $header = array('id', 'name', 'clicks');
-                // Output CSV file with the image params
-            //$fileName = "D:\params.csv";
-            //add BOM to fix UTF-8 in Excel
-            //fputs($csv, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
-
-            //fputcsv($fp, $header); 
  
             $array_len = 0;    
-            $fp = fopen('/improvement.csv','w');
+            $fp = fopen('/improvement.csv','w'); // File to store the results into
             
-            /* IMG amount count array for each iteration 142-5=137 */
-            /* Filled with zeros */
-            //$imcounts = array_fill(0, 137, 0);
-            
-            for ($i = 1; $i <= 142; $i++) {
-                foreach($images as $image) {   
-                    // GET IMAGEs THAT HAS $y clicks
-                    
+            /* The array length for each iteration is 138. Remember to set 
+             * getImgCountsForImprovement to match the same for loop code. */
+            for ($i = 5; $i <= 142; $i++) {
+                // Get points of each image
+                foreach($images as $image) {                  
                     $pointsraw_unfiltered = $imDAO->getAllClicksImage($app, $image['id']);
-                    
+                    // Run the code if image has $i number of clicks, else set centroid
+                    // to 0,0 five times instead of five iters of RANSAC
                     if (count($pointsraw_unfiltered) > $i) {
-                        /* Increase according image count array*/
-                        //$imcounts[$i-5]++;
-                        // WE CANT REORDER PTS, TAKE WITH THE ORDER THEY ARE TAKEN
+                        // Remove duplicate points
                         $pointsraw_tmp = array_unique($pointsraw_unfiltered,SORT_REGULAR);
                         $pointsraw = array_values($pointsraw_tmp);
                         shuffle($pointsraw);    
                         $n = count($pointsraw);
+                        // Get $i number of points from the array
                         $chunked = array_slice($pointsraw, 0, $i);
 
                         $j = 0;
                         while ($j < 5) {
                             $centroid = array('x' => 0, 'y' => 0);
                             
+                            // If over five points, run RANSAC
                             if ($i > 5 ) { 
                                 $ransac = new Ransac;
                                 $points = $ransac->ransacAlg($chunked);
@@ -342,6 +328,7 @@
                                     $j = $j + 1;
                                 }
                             }
+                            // Else get params according to five pts
                             else {
                                 Equation::setfrompoints($chunked);
                                 $centroid = Equation::getCenter();
@@ -349,8 +336,6 @@
                                 fputcsv($fp, $temp1);
                                 $j = $j + 1;
                             }
-                            
-                            
                         }
                     } 
                     /* If less than $i click count: input 5 times 0,0 as centroid */
@@ -373,7 +358,8 @@
             ));
         }
         
-        
+        // The amount of imgs with the corresponding iteration count of 
+        // get5ToAll function
         public function getImgCountsForImprovement(Application $app) {
             $imDAO = new ImageDAO();
             $images = $imDAO->getAllImages($app);
@@ -411,7 +397,8 @@
             ));
         }
         
-        
+        // Get image click ammount or user click amount
+        // depending on which part of the code is uncommented
         public function getUserClickAmount(Application $app) {
             
             $imDAO = new ImageDAO();
@@ -504,18 +491,17 @@
         }
         
         
+        /* Get the timestamps of all clicks of each player */
         public function getTimestampsCSV(Application $app) {
             $pDAO = new PlayerDAO();
             $players = $pDAO->getAllPlayers($app);
             $imDAO = new ImageDAO();
             
+            // Input .csv file
             $fp = fopen('/stamps.csv','w');
             foreach ($players as $player) {
                 $stamps = $imDAO->getAllStampsUser($app, $player['id']);
                 foreach ($stamps as $stamp) {
-                    //var_dump($stamp);
-                    //$ar = array('pid' => $player['id'], 'stamp' => $stamp);
-                    //$csv_array = array($player,$ar);
                     fputcsv($fp, $stamp);
                 }
             }
@@ -525,14 +511,6 @@
                     
             ));
         }
-        
-        
-        
-    public function console_log(application $app, $data ){
-        echo '<script>';
-        echo 'console.log('. json_encode( $data ) .')';
-        echo '</script>';
-    }
     
 }
 
