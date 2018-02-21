@@ -1,22 +1,14 @@
 <?php
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace TU\Utils;
-    use TU\Utils\Equation;
-    use TU\Utils\Ellipse;
-    use TU\controllers\ImageController;
-    //use TU\Utils\Matrix;
-    //use \webd\vectors\Vector;
+use TU\Utils\Equation;
+use TU\Utils\Ellipse;
+use TU\controllers\ImageController;
     
 /**
- * Description of Equation
- *
- * @author Maza
+ * Functions for calculating the ellipses parameters according to given points
+ * in an array of x,y coordinates. Still open if the params should be static
+ * or not.
+ * @author Matti Suokas
  */
 class Equation {
     private static $equation = array(
@@ -37,159 +29,141 @@ class Equation {
     private static $f2_y = 0;
     private static $axisa = 0;
     private static $axisb = 0;
-    
-    
-    //$my = function($arg) {
-    //		this.$equation = {$a:0, $b:0, $c:0, $d:0, $e:0, $f:0, $angle:0};
 	
     public static function setfromequation($a, $b, $c, $d, $e, $f) {
-			$equation['a'] = $a;
-			$equation['b'] = $b;
-			$equation['c'] = $c;
-			$equation['d'] = $d;
-			$equation['e'] = $e;
-			$equation['f'] = $f;
-                        $equation['angle'];
-                        $equation['err'] = false;
-                        
-		}
+        $equation['a'] = $a;
+        $equation['b'] = $b;
+        $equation['c'] = $c;
+        $equation['d'] = $d;
+        $equation['e'] = $e;
+        $equation['f'] = $f;
+        $equation['angle'];
+        $equation['err'] = false;
+
+    }
 		
     public static function setfromReducedequation($a, $c, $d, $e, $f, $angle) {
-			$equation['a'] = $a;
-			$equation['b'] = 0;
-			$equation['c'] = $c;
-			$equation['d'] = $d;
-			$equation['e'] = $e;
-			$equation['f'] = $f;
-			$equation['angle'] = ($angle === undefined)?0:$angle;
-		}
+        $equation['a'] = $a;
+        $equation['b'] = 0;
+        $equation['c'] = $c;
+        $equation['d'] = $d;
+        $equation['e'] = $e;
+        $equation['f'] = $f;
+        $equation['angle'] = ($angle === undefined)?0:$angle;
+    }
 	
     public static function setfrompoints($u){
-			//compute sums
-			$Sxxxx = array_reduce($u,function($p, $c) { return $p + $c['x'] * $c['x'] * $c['x'] * $c['x']; }, 0);
-			$Sxxxy = array_reduce($u,function($p, $c) { return $p + $c['x'] * $c['x'] * $c['x'] * $c['y']; }, 0);
-			$Sxxyy = array_reduce($u,function($p, $c) { return $p + $c['x'] * $c['x'] * $c['y'] * $c['y']; }, 0);
-			$Sxyyy = array_reduce($u,function($p, $c) { return $p + $c['x'] * $c['y'] * $c['y'] * $c['y']; }, 0);
-			$Syyyy = array_reduce($u,function($p, $c) { return $p + $c['y'] * $c['y'] * $c['y'] * $c['y']; }, 0);
-			$Sxxx  = array_reduce($u,function($p, $c) { return $p + $c['x'] * $c['x'] * $c['x'];       }, 0);
-			$Sxxy  = array_reduce($u,function($p, $c) { return $p + $c['x'] * $c['x'] * $c['y'];       }, 0);
-			$Sxyy  = array_reduce($u,function($p, $c) { return $p + $c['x'] * $c['y'] * $c['y'];       }, 0);
-			$Syyy  = array_reduce($u,function($p, $c) { return $p + $c['y'] * $c['y'] * $c['y'];       }, 0);
-			$Sxx   = array_reduce($u,function($p, $c) { return $p + $c['x'] * $c['x'];             }, 0);
-			$Sxy   = array_reduce($u,function($p, $c) { return $p + $c['x'] * $c['y'];             }, 0);
-			$Syy   = array_reduce($u,function($p, $c) { return $p + $c['y'] * $c['y'];             }, 0);
-			$Sx    = array_reduce($u,function($p, $c) { return $p + $c['x'];                   }, 0);
-			$Sy    = array_reduce($u,function($p, $c) { return $p + $c['y'];                   }, 0);
-			
-			
-			//$construct martrices
-			$S1 = [[$Sxxxx, $Sxxxy, $Sxxyy],
-					  [$Sxxxy, $Sxxyy, $Sxyyy],
-					  [$Sxxyy, $Sxyyy, $Syyyy]];
-			$S2 = [[$Sxxx, $Sxxy, $Sxx],
-					  [$Sxxy, $Sxyy, $Sxy],
- 					  [$Sxyy, $Syyy, $Syy]];
-			$S3 = [[$Sxx, $Sxy, $Sx],
-					  [$Sxy, $Syy, $Sy],
-  					  [$Sx, $Sy, count($u)]];
-			$S2T =  Ellipse::transpose($S2);
-			$iS3 =  Ellipse::inverse($S3);
-			$iC = [[0, 0, .5],
-			    [0, -1, 0],
-			    [.5, 0, 0]];
-                        
-                        
-			$U = Ellipse::multiply($iS3, $S2T); 
-			$U = Ellipse::scale($U, -1);
-			$A = Ellipse::multiply($iC, Ellipse::add($S1, Ellipse::multiply($S2, $U)));
-                        
-                        Ellipse::setA($A);
-			$eigVal = Ellipse::eigenvalues($A); 
-                        //$eigVal = Lapack::eigenValues($A);
-			//eigenvectors - original commented below
-                        $eigVec = array_map(function($l) {
-                            $EA = Ellipse::getA();
-                            $ev = Ellipse::nullspace(Ellipse::add($EA, [[-$l, 0, 0],[0, -$l, 0],[0, 0, -$l]]));
-                            return array('ev' => $ev, 'cond' => 4*$ev[2]*$ev[0] - $ev[1]*$ev[1]);                           
+        //compute sums
+        $Sxxxx = array_reduce($u,function($p, $c) { return $p + $c['x'] * $c['x'] * $c['x'] * $c['x']; }, 0);
+        $Sxxxy = array_reduce($u,function($p, $c) { return $p + $c['x'] * $c['x'] * $c['x'] * $c['y']; }, 0);
+        $Sxxyy = array_reduce($u,function($p, $c) { return $p + $c['x'] * $c['x'] * $c['y'] * $c['y']; }, 0);
+        $Sxyyy = array_reduce($u,function($p, $c) { return $p + $c['x'] * $c['y'] * $c['y'] * $c['y']; }, 0);
+        $Syyyy = array_reduce($u,function($p, $c) { return $p + $c['y'] * $c['y'] * $c['y'] * $c['y']; }, 0);
+        $Sxxx  = array_reduce($u,function($p, $c) { return $p + $c['x'] * $c['x'] * $c['x'];       }, 0);
+        $Sxxy  = array_reduce($u,function($p, $c) { return $p + $c['x'] * $c['x'] * $c['y'];       }, 0);
+        $Sxyy  = array_reduce($u,function($p, $c) { return $p + $c['x'] * $c['y'] * $c['y'];       }, 0);
+        $Syyy  = array_reduce($u,function($p, $c) { return $p + $c['y'] * $c['y'] * $c['y'];       }, 0);
+        $Sxx   = array_reduce($u,function($p, $c) { return $p + $c['x'] * $c['x'];             }, 0);
+        $Sxy   = array_reduce($u,function($p, $c) { return $p + $c['x'] * $c['y'];             }, 0);
+        $Syy   = array_reduce($u,function($p, $c) { return $p + $c['y'] * $c['y'];             }, 0);
+        $Sx    = array_reduce($u,function($p, $c) { return $p + $c['x'];                   }, 0);
+        $Sy    = array_reduce($u,function($p, $c) { return $p + $c['y'];                   }, 0);
 
-                        }, $eigVal);
-                        
-                        
-                        Ellipse::setA($A);
-                       
-			//condition
-                        $a1filter = array_filter($eigVec,function($e) {
-                            return $e['cond'] > 0;
-                        });
-                        
-			$a1 = array_reduce($a1filter, function($p,$c) {
-                            // ROUNDING TO 13 DECIMALS FIX IN TEST?!?!?!?!?!?!!?!??!?!?!?!?!?!?!??!?!?!?!?!?!!?
-                            // return $p['cond'] < round($c['cond'],13) ? $p : $c;   DIDNT FIX
-                            return $p['cond'] < $c['cond'] ? $p : $c;   
-			}, array('cond' => INF, 'err' => true));
-                        
-                        // TO DO - HANDLE THE ERROR CASES
-			if (array_key_exists('err', $a1) == false) {
-				$ev = $a1['ev'];
-				self::$equation['a'] = $ev[0];
-				self::$equation['b'] = $ev[1];
-				self::$equation['c'] = $ev[2];
-				self::$equation['d'] = $U[0][0]*$ev[0] + $U[0][1]*$ev[1] + $U[0][2]*$ev[2];
-				self::$equation['e'] = $U[1][0]*$ev[0] + $U[1][1]*$ev[1] + $U[1][2]*$ev[2];
-				self::$equation['f'] = $U[2][0]*$ev[0] + $U[2][1]*$ev[1] + $U[2][2]*$ev[2];
-                                self::$equation['err'] = false;
-                                //$equationstring = Equation::printEquation();
-			} else {
-                            //$ev = $a1['ev'];
-                            //echo("err, inf val!");
-                           /* self::$equation['a'] = $ev[0];
-                            self::$equation['b'] = $ev[1];
-                            self::$equation['c'] = $ev[2];
-                            self::$equation['d'] = $U[0][0]*$ev[0] + $U[0][1]*$ev[1] + $U[0][2]*$ev[2];
-                            self::$equation['e'] = $U[1][0]*$ev[0] + $U[1][1]*$ev[1] + $U[1][2]*$ev[2];
-                            self::$equation['f'] = $U[2][0]*$ev[0] + $U[2][1]*$ev[1] + $U[2][2]*$ev[2]; 
-                            self::$equation['a'] = 0.00000001; 
-                            self::$equation['b'] = 0.00000001; 
-                            self::$equation['c'] = 0.00000001; 
-                            self::$equation['d'] = 0.00000001; 
-                            self::$equation['e'] = 0.00000001; 
-                            self::$equation['f'] = 0.00000001; */
-                            self::$equation['err'] = true;
-			}
-                        //Equation::getCenter();
-		}
+
+        //construct martrices
+        $S1 = [[$Sxxxx, $Sxxxy, $Sxxyy],
+                [$Sxxxy, $Sxxyy, $Sxyyy],
+                [$Sxxyy, $Sxyyy, $Syyyy]];
+        $S2 = [[$Sxxx, $Sxxy, $Sxx],
+                [$Sxxy, $Sxyy, $Sxy],
+                [$Sxyy, $Syyy, $Syy]];
+        $S3 = [[$Sxx, $Sxy, $Sx],
+                [$Sxy, $Syy, $Sy],
+                [$Sx, $Sy, count($u)]];
+        $S2T =  Ellipse::transpose($S2);
+        $iS3 =  Ellipse::inverse($S3);
+        $iC = [[0, 0, .5],
+                [0, -1, 0],
+                [.5, 0, 0]];
+
+
+        $U = Ellipse::multiply($iS3, $S2T); 
+        $U = Ellipse::scale($U, -1);
+        $A = Ellipse::multiply($iC, Ellipse::add($S1, Ellipse::multiply($S2, $U)));
+        
+        // Sets A param to Ellipse.php cause of the array_map function's context
+        // Should be corrected 
+        Ellipse::setA($A);
+        $eigVal = Ellipse::eigenvalues($A); 
+        $eigVec = array_map(function($l) {
+            // Gets A from Ellipse.php, should be corrected 
+            $EA = Ellipse::getA();
+            $ev = Ellipse::nullspace(Ellipse::add($EA, [[-$l, 0, 0],[0, -$l, 0],[0, 0, -$l]]));
+            return array('ev' => $ev, 'cond' => 4*$ev[2]*$ev[0] - $ev[1]*$ev[1]);                           
+
+        }, $eigVal);
+
+
+        Ellipse::setA($A);
+
+        //condition
+        $a1filter = array_filter($eigVec,function($e) {
+            return $e['cond'] > 0;
+        });
+
+        $a1 = array_reduce($a1filter, function($p,$c) {
+            return $p['cond'] < $c['cond'] ? $p : $c;   
+        }, array('cond' => INF, 'err' => true));
+
+        // If the array doesn't have error value (inf value)
+        if (array_key_exists('err', $a1) == false) {
+                $ev = $a1['ev'];
+                self::$equation['a'] = $ev[0];
+                self::$equation['b'] = $ev[1];
+                self::$equation['c'] = $ev[2];
+                self::$equation['d'] = $U[0][0]*$ev[0] + $U[0][1]*$ev[1] + $U[0][2]*$ev[2];
+                self::$equation['e'] = $U[1][0]*$ev[0] + $U[1][1]*$ev[1] + $U[1][2]*$ev[2];
+                self::$equation['f'] = $U[2][0]*$ev[0] + $U[2][1]*$ev[1] + $U[2][2]*$ev[2];
+                self::$equation['err'] = false;
+        } 
+        // TO DO - HANDLE THE ERROR CASES
+        else {
+            // Inf value in the array, change error to true
+            self::$equation['err'] = true;
+        }
+    }
                 
     public static function printCoeff($x) {
-			return ($x<0?"-":"+") + abs(round($x*1000)/1000);
-		}
+        return ($x<0?"-":"+") + abs(round($x*1000)/1000);
+    }
                 
     public static function printEquation() {
-			return  Equation::printCoeff(self::$equation['a']) . "x^2 "
-				 . Equation::printCoeff(self::$equation['b']) . "xy "
-				 . Equation::printCoeff(self::$equation['c']) . "y^2 "
-				 . Equation::printCoeff(self::$equation['d']) . "x "
-				 . Equation::printCoeff(self::$equation['e']) . "y "
-				 . Equation::printCoeff(self::$equation['f']) . " = 0";
+        return  Equation::printCoeff(self::$equation['a']) . "x^2 "
+                . Equation::printCoeff(self::$equation['b']) . "xy "
+                . Equation::printCoeff(self::$equation['c']) . "y^2 "
+                . Equation::printCoeff(self::$equation['d']) . "x "
+                . Equation::printCoeff(self::$equation['e']) . "y "
+                . Equation::printCoeff(self::$equation['f']) . " = 0";
                         
 		}
 		
     public static function convertToReducedEquation() {
-			$eq = self::$equation;
-			$t = atan(self::$equation['b'] / (self::$equation['c'] - self::$equation['a']))/2;
-			$s = sin($t);
-			$c = cos($t);
-			$old_a = self::$equation['a'];
-                        $old_b = self::$equation['b'];
-			$old_c = self::$equation['c'];
-			$old_d = self::$equation['d'];
-			$old_e = self::$equation['e'];
-			self::$equation['a'] = $old_a*$c*$c - $old_b*$c*$s + $old_c*$s*$s;
-			self::$equation['c'] = $old_a*$s*$s + $old_b*$c*$s + $old_c*$c*$c;
-			self::$equation['d'] = $old_d*$c - $old_e*$s;
-			self::$equation['e'] = $old_d*$s + $old_e*$c;
-			self::$equation['angle'] = $t;
-			self::$equation['b'] = 0;
-		}
+        $eq = self::$equation;
+        $t = atan(self::$equation['b'] / (self::$equation['c'] - self::$equation['a']))/2;
+        $s = sin($t);
+        $c = cos($t);
+        $old_a = self::$equation['a'];
+        $old_b = self::$equation['b'];
+        $old_c = self::$equation['c'];
+        $old_d = self::$equation['d'];
+        $old_e = self::$equation['e'];
+        self::$equation['a'] = $old_a*$c*$c - $old_b*$c*$s + $old_c*$s*$s;
+        self::$equation['c'] = $old_a*$s*$s + $old_b*$c*$s + $old_c*$c*$c;
+        self::$equation['d'] = $old_d*$c - $old_e*$s;
+        self::$equation['e'] = $old_d*$s + $old_e*$c;
+        self::$equation['angle'] = $t;
+        self::$equation['b'] = 0;
+    }
 		
     public static function getAxisLength() {
         $a = self::$equation['a'];  // A20   x^2 
