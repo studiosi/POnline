@@ -31,7 +31,7 @@
         $app->get('/admin/csv3', 'TU\Controllers\AdminController::getUserClickAmount')
 	->bind('admin_csv3');
         
-        $app->get('/admin/csv4', 'TU\Controllers\AdminController::getConcurrency')
+        $app->get('/admin/csv4', 'TU\Controllers\AdminController::getConsistency')
 	->bind('admin_csv4');
         
         $app->get('/admin/csv5', 'TU\Controllers\AdminController::getTimestampsCSV')
