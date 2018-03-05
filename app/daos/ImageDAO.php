@@ -7,6 +7,7 @@ use TU\Utils\FormatUtils;
 
 class ImageDAO {
 
+        // Returns the image object with least clicks
 	public function getLessClickedImage(Application $app) {
 
 		$qb = $app['db']->createQueryBuilder();
@@ -33,6 +34,7 @@ class ImageDAO {
 
 	}
 	
+        // Inserts one given point into the db
 	public function insertPoint(Application $app, $id, $newPoint, $id_player, $distance, $human) {
 		
 		$human ? $h = 1 : $h = 0;
@@ -49,6 +51,7 @@ class ImageDAO {
 		
 	}
 
+        // Returns an image object with the requested image id
 	public function getImageById(Application $app, $id) {
 		
 		$qb = $app['db']->createQueryBuilder();
@@ -63,6 +66,7 @@ class ImageDAO {
 		
 	}
 	
+        // Returns all the clicks from and image with the requested image id
 	public function getAllClicksImage(Application $app, $id) {
 		
 		$qb = $app['db']->createQueryBuilder();
@@ -82,8 +86,8 @@ class ImageDAO {
 		
 	}
         
-        // For timestamps
-        public function getAllStampsUser(Application $app, $id) {
+        // Returns all the timestamps of user clicks with the requested user id
+        public function getAllStampsUser(Application $app, $id_player) {
 		
 		$qb = $app['db']->createQueryBuilder();
 		$ope = "OPE";
@@ -92,7 +96,7 @@ class ImageDAO {
                 ->innerJoin('c', 'players', 'i', 'c.id_player = i.id')        
 		->where(
                     
-			$qb->expr()->eq('c.id_player', $id)   
+			$qb->expr()->eq('c.id_player', $id_player)   
                         
 		);
                
@@ -102,6 +106,7 @@ class ImageDAO {
 		
 	}
 	
+        // Returns all the image objects from database
 	public function getAllImages(Application $app) {
 		
 		$qb = $app['db']->createQueryBuilder();
@@ -113,7 +118,7 @@ class ImageDAO {
 		
 	}
         
-        // Gets player inputted points for the admin user view
+        // Gets player inputted points for the admin user view with given player id
         public function getAllPlayerImages(Application $app, $id_player) {
                 $qb = $app['db']->createQueryBuilder();
               
@@ -130,6 +135,8 @@ class ImageDAO {
 		
 	}
 	
+        // returns all valid points with the requested player id and image id 
+        // for the requested image and player
 	public function getClicksUserImage(Application $app, $id_photo, $id_player) {
 		
 		$qb = $app->createQueryBuilder();
@@ -149,6 +156,7 @@ class ImageDAO {
 		
 	}
 	
+        // Returns the total click amount of the system
 	public function getTotalClicks(Application $app) {
 			
 		$qb = $app['db']->createQueryBuilder();
@@ -160,6 +168,7 @@ class ImageDAO {
 			
 	}
 	
+        // Returns the image count the database holds
 	public function getNumberImages(Application $app) {
 		
 		$qb = $app['db']->createQueryBuilder();
@@ -171,7 +180,8 @@ class ImageDAO {
 		
 	}
 	
-	// For this we don't care if the user has been banned or not
+	// Returns all valid points with the requested player id and image id
+        // For this we don't care if the user has been banned or not
 	public function getAllClicksUserImage(Application $app, $id_player, $id_photo) {
 		
 		$qb = $app['db']->createQueryBuilder();
@@ -191,7 +201,8 @@ class ImageDAO {
 		
 	}
         
-        // For this we don't care if the user has been banned or not
+        // returns all the point objects of each click without considering 
+        // if they are valid or not nor if the user is operational or banned
 	public function getAllClicks(Application $app) {
 		
 		$qb = $app['db']->createQueryBuilder();
