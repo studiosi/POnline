@@ -17,6 +17,7 @@
 		
 		public static $SESSION_PLAYER_ID = 'SESSION_PLAYER';
 		
+                // Checks if the given username already exists in the db
 		public function existsUsername(Application $app, $username) {
 			
 			$qb = $app['db']->createQueryBuilder();
@@ -33,6 +34,7 @@
 			
 		}
 		
+                // Creates admin user to users table of the database
                 public function createAdmin(Application $app, $username, $password) {
 			
 			$f = new RandomLib\Factory();
@@ -51,6 +53,7 @@
 			
 		}
                 
+                // Creates player to players table of the database
 		public function createPlayer(Application $app, $username, $password, $email) {
 			
 			$f = new RandomLib\Factory();
@@ -71,6 +74,7 @@
 			
 		}
 		
+                // Checks if the players password match his hash and password
 		public function checkLoginPlayer(Application $app, $username, $password) {
 			
 			$qb = $app['db']->createQueryBuilder();
@@ -83,6 +87,7 @@
 			
 			$player = $app['db']->fetchAssoc($qb->getSQL());
 			
+                        // If player is banned return false
 			if(strcmp($player['status'], PlayerDAO::$STATUS['BANNED']) == 0) {
 				
 				return false;
@@ -93,12 +98,15 @@
 			$g = $f->getGenerator(new SecurityLib\Strength(SecurityLib\Strength::MEDIUM));
 			$salt = $player['salt'];
 			$encoder = new MessageDigestPasswordEncoder();
+                        // Encode hash with the given password and queried salt
 			$hash = $encoder->encodePassword($password, $salt);
 			
+                        // Return if the hash and the players password match or not
 			return (strcmp($hash, $player['password']) == 0);
 			
 		}
 		
+                // Sets this class' session data for the player
 		public function doLoginUserSession(Application $app, $username) {
 			
 			$qb = $app['db']->createQueryBuilder();
@@ -115,16 +123,19 @@
 			
 		}
 		
+                // Checks if the user is logged in
 		public function checkIfUserLoggedIn(Application $app) {
-			
-			
+					
 			$value = $app['session']->get(PlayerDAO::$SESSION_PLAYER_ID, -1);
+                        // Return false if user is logged in, true if not
 			if($value == -1) {
 				return false;
 			}
 			return true;
 		}
 		
+                // Returns leaderboard with operational players. Leaderboard is in 
+                // descending order according to amount of clicks by each player
 		public function getLeaderboard(Application $app) {
 			
 			$qb = $app['db']->createQueryBuilder();
@@ -141,6 +152,7 @@
 			
 		}
 		
+                // Return all players’ data objects from inner join of players table and leaderboard view
 		public function getAllPlayers(Application $app) {
 			
 			$qb = $app['db']->createQueryBuilder($app);
@@ -153,6 +165,7 @@
 			
 		}
 		
+                // Return player's data object by id
 		public function getPlayerById(Application $app, $id) {
 			
 			$qb = $app['db']->createQueryBuilder($app);
@@ -167,6 +180,7 @@
 			
 		}
 		
+                // Returns the leaderboard's leader's click amount
 		public function getLeaderNClicks(Application $app) {
 			
 			$qb = $app['db']->createQueryBuilder($app);
@@ -183,24 +197,33 @@
 			
 		}
 		
+                // Checks how many points are left to input for the player to rise up one position in the board
 		public function getNextNClicks(Application $app, $id_player, $n_clicks) {
 			
 			$qb = $app['db']->createQueryBuilder($app);
-				
+			
+                        // Select click amount N from leaderboard view
 			$qb->select('N')
 			->from('leaderboard', 'l')
-			->andWhere(				
+			->andWhere(	
+                                // Set expression status to equal operational player
 				$qb->expr()->eq('status', '\'' . PlayerDAO::$STATUS['OPERATIONAL'] . '\''),	
+                                // Set expression click Number N to be greater than n_clicks 
 				$qb->expr()->gt('N', $n_clicks),
+                                // Set expression to exclude id_player
 				$qb->expr()->neq('id_player', $id_player)
 			)
+                        // Order by N in ascending order
 			->orderBy('N', 'asc')
+                        // Set only one result to be query's max number of results
 			->setMaxResults(1);
 						
+                        // Return the queried data object
 			return $app['db']->fetchColumn($qb->getSQL(), array(), 0);
 			
 		}
 		
+                //Returns click count N of the queried user id 
 		public function getNClicksByID(Application $app, $user_id) {
 			
 			$qb = $app['db']->createQueryBuilder($app);
@@ -215,6 +238,7 @@
 			
 		}
 		
+                // Update player operation status to BAN or OPE by $op to players db table
 		public function userOp(Application $app, $op, $user_id) {
 			
 			$nVal = null;
@@ -226,7 +250,7 @@
 			}
 			
 			if(!is_null($nVal)) {
-				
+				// Update players status to players table of annotator database
 				$app['db']->update('players', array('status' => $nVal), array('id' => $user_id));
 				
 			}
