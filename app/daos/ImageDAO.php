@@ -66,7 +66,8 @@ class ImageDAO {
 		
 	}
 	
-        // Returns all the clicks from and image with the requested image id
+        // Returns all the clicks from and image with the requested image id.
+        // Includes only operational users.
 	public function getAllClicksImage(Application $app, $id) {
 		
 		$qb = $app['db']->createQueryBuilder();
@@ -156,7 +157,7 @@ class ImageDAO {
 		
 	}
 	
-        // Returns the total click amount of the system
+        // Returns the total click amount from the total_clicks view
 	public function getTotalClicks(Application $app) {
 			
 		$qb = $app['db']->createQueryBuilder();
@@ -201,8 +202,7 @@ class ImageDAO {
 		
 	}
         
-        // returns all the point objects of each click without considering 
-        // if they are valid or not nor if the user is operational or banned
+        // returns click id, photo id and player id of every click
 	public function getAllClicks(Application $app) {
 		
 		$qb = $app['db']->createQueryBuilder();
