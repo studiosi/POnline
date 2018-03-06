@@ -403,7 +403,6 @@
         
         // Get data of every click into CSV with image, player and click id 
         public function getUserClickAmount(Application $app) {
-            
             $imDAO = new ImageDAO();
             $images = $imDAO->getAllImages($app);
             $pointsraw = $imDAO->getAllClicks($app);
@@ -474,22 +473,27 @@
         }
 
         public function userOp(Application $app, Request $req) {
-
+            // Get (Cross Site Request Forgery) CSRF security token
             $t = $req->get('t');
+            // Session key for session
             $t_s = $app['session']->get($this->TOKEN_BAN_UNBAN);
-
+            
+            // If Session key and CSRF security token dont match return err 400
             if($t != $t_s) {
                 $app->abort(400, "Invalid request");
             }
 
             var_dump($t);
             var_dump($t_s);
-
+            
+            // Create new PlayerDAO
             $pDAO = new PlayerDAO();
-
+            
+            // Store operational status and users id from the request
             $op = $req->get('op');
             $user_id = $req->get('id');
 
+            // Update user's PlayerDAO according request's operational status and id
             $pDAO->userOp($app, $op, $user_id);
 
             return "";
