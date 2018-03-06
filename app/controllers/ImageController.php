@@ -92,6 +92,7 @@
 			
 			$pointList = $imDAO->getAllClicksImage($app, $id);
 			
+                        // Lots of unecessary stuff for POnline2 as it accepts every point
 			if(count($pointList) >= $this->MIN_CLICKS) {
 			
 				$centroid = MathUtils::calculateCentroid($pointList);
@@ -144,12 +145,10 @@
 		public function showPoints(Application $app, $id) {
 			
 			$imDAO = new ImageDAO();
-                        
+                        // Get the image object with id
 			$image = $imDAO->getImageById($app, $id);
-			//$pointsraw = $imDAO->getAllClicksImage($app, $id);
-			/*
-                        $pointsraw = $tmp; 
-                         */
+                        // Get all point objects input into the image
+			$pointsraw = $imDAO->getAllClicksImage($app, $id);
                         
                         /* for testing 
                         $pointsraw_unfiltered = $imDAO->getAllClicksImage($app, $id);
@@ -172,10 +171,14 @@
                         //var_dump($pointsraw);
                         
                         $ransac = new Ransac;
+                        // Fit the points with RANSAC
                         $points = $ransac->ransacAlg($pointsraw);
                         
+                        // Setup variable for outlier points
                         $outlier_points = array();
                         $j = 0;
+                        
+                        // Input outlier points into the outlier_points array
                         for ($i = 0; $i < count($pointsraw); $i++) {
                             if (!in_array($pointsraw[$i], $points)) {
                                 $outlier_points[$j] = $pointsraw[$i];
@@ -185,28 +188,35 @@
                         
                         $centroid = array('x' => 0, 'y' => 0);
                         if (count($points) > 0) {
+                            // Get ellipse params with the inlier points
                             Equation::setfrompoints($points);
-
+                            
+                            // Get centroid of the ellipse
                             $centroid = Equation::getCenter();		
 			}
                         
                         $axis = [0,1];
                         if (count($points) > 0) {
+                            // Get major and minor axis length of the ellipse
                             $axis = Equation::getAxisLength();
                         }
                         
-                        
                         $angle = 0;
                         if (count($points) > 0) {
+                            // Get the angle of the ellipse 
                             $angle = Equation::getAngle();
                         }
                         
+                        // Serialize inlier points
 			$pointList = FormatUtils::getJavascriptSerializedPoints($points);
+                        // Serialize outlier points
                         $outlierList = FormatUtils::getJavascriptSerializedPoints($outlier_points);
+                        // Serialize centroid
 			$cent = FormatUtils::getJavascriptSerializedPoints(array($centroid), true);
                         $axisa = $axis[0];
                         $axisb = $axis[1];
                         
+                        // Return show.twig page with the calculated parameters
 			return $app['twig']->render('show.twig',
 			array(
 				'image' => $image,
@@ -229,10 +239,13 @@
 			$pointList = FormatUtils::getJavascriptSerializedPoints($user_points_raw);
 			    
                         $ransac = new Ransac;
+                        // Fit the points with RANSAC
                         $points = $ransac->ransacAlg($user_points_raw);
                         
+                        // Setup variable for outlier points
                         $outlier_points = array();
                         $j = 0;
+                        // Input outlier points into the outlier_points array
                         for ($i = 0; $i < count($user_points_raw); $i++) {
                             if (!in_array($user_points_raw[$i], $points)) {
                                 $outlier_points[$j] = $user_points_raw[$i];
@@ -242,24 +255,30 @@
                         
                         $centroid = array('x' => 0, 'y' => 0);
                         if (count($points) > 0) {
+                            // Get ellipse params with the inlier points
                             Equation::setfrompoints($points);
-
+                            // Get centroid of the ellipse
                             $centroid = Equation::getCenter();		
 			}
                         
                         $axis = [0,1];
                         if (count($points) > 0) {
+                            // Get major and minor axis length of the ellipse
                             $axis = Equation::getAxisLength();
                         }
                         
                         
                         $angle = 0;
                         if (count($points) > 0) {
+                            // Get the angle of the ellipse 
                             $angle = Equation::getAngle();
                         }
                         
+                        // Serialize inlier points
 			$pointList = FormatUtils::getJavascriptSerializedPoints($points);
+                        // Serialize outlier points
                         $outlierList = FormatUtils::getJavascriptSerializedPoints($outlier_points);
+                        // Serialize centroid
 			$cent = FormatUtils::getJavascriptSerializedPoints(array($centroid), true);
                         $axisa = $axis[0];
                         $axisb = $axis[1];
@@ -277,15 +296,5 @@
                         ));
 			
 		}
-			
-		
-                // Console debugging
-                public function debug_to_console( $data ) {
-                    $output = $data;
-                    if ( is_array( $output ) )
-                        $output = implode( ',', $output);
-
-                    echo "<script>console.log( 'Debug Objects: " . $output . "' );</script>";
-                }
 		
 	}
