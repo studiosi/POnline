@@ -25,7 +25,7 @@
         $app->get('/admin/csv', 'TU\Controllers\AdminController::getPercentageCSV')
 	->bind('admin_csv');
         
-        $app->get('/admin/csv2', 'TU\Controllers\AdminController::getNClicksFromImg')
+        $app->get('/admin/csv2', 'TU\Controllers\AdminController::getAllPlayersToCsv')
 	->bind('admin_csv2');
         
         $app->get('/admin/csv3', 'TU\Controllers\AdminController::getUserClickAmount')
