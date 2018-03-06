@@ -17,13 +17,15 @@
     class AdminController {
 
         private $TOKEN_BAN_UNBAN = 'token_ban_unban';
-
+        
+        // Renders signup.twig for sign up page
         public function getSignup(Application $app) {
 
             return $app['twig']->render('signup.twig');
 
         }
-
+        
+        // For admin user creation
         public function postSignup(Application $app, Request $req) {
 
             $username = $req->get('username');
@@ -126,6 +128,7 @@
             ));
         }
         
+        /*
         public function getNClicksFromImg(Application $app) {
             $imDAO = new ImageDAO();
             // For the test, get img with id 168
@@ -186,6 +189,7 @@
                     
             ));
         }
+        */
         
         /* For getting the consistency data of two equal length arrays.
         Divides the data of each image into 50% amount arrays and runs RANSAC
@@ -397,8 +401,7 @@
             ));
         }
         
-        // Get image click ammount or user click amount
-        // depending on which part of the code is uncommented
+        // Get data of every click into CSV with image, player and click id 
         public function getUserClickAmount(Application $app) {
             
             $imDAO = new ImageDAO();
@@ -412,23 +415,27 @@
                 fputcsv($fp, $point);
             }
             fclose($fp);
-             /*
+            
+            return $app['twig']->render('csv3.twig', array(
+                    
+            )); 
+        }
+
+        // Get all players to a csv file with all of their data fields
+        public function getAllPlayersToCsv(Application $app) {
             $fp = fopen('/players.csv','w');
             $pDAO = new PlayerDAO();
             $players = $pDAO->getAllPlayers($app);
-            
+
             foreach ($players as $player) {
                 fputcsv($fp, $player);
             }
-            fclose($fp);
-            
-             */
-            return $app['twig']->render('csv3.twig', array(
+            fclose($fp);   
+              
+            return $app['twig']->render('csv2.twig', array(
                     
             ));
-            
         }
-
 
         public function showMainMenu(Application $app) {
 
