@@ -133,10 +133,12 @@ class Equation {
         }
     }
                 
+    // Return ellipse’s equation as a string based on the class' parameters
     public static function printCoeff($x) {
         return ($x<0?"-":"+") + abs(round($x*1000)/1000);
     }
                 
+    // Convert the class equation into reduced equation form
     public static function printEquation() {
         return  Equation::printCoeff(self::$equation['a']) . "x^2 "
                 . Equation::printCoeff(self::$equation['b']) . "xy "
@@ -165,6 +167,7 @@ class Equation {
         self::$equation['b'] = 0;
     }
 		
+    // Return the length of the axis a and b as an array
     public static function getAxisLength() {
         $a = self::$equation['a'];  // A20   x^2 
         $b = self::$equation['b'];  // A10   xy
@@ -193,19 +196,26 @@ class Equation {
         return $axis;
     }
                 
+    // Return the angle of the ellipse
     public static function getAngle() {
         $a = self::$equation['a'];
         $b = self::$equation['b'];
         $c = self::$equation['c'];
         
+        // Calculate ellipse's angle if b is not 0
         if (self::$equation['b'] != 0)
             self::$equation['angle'] = atan(($c - $a - sqrt(($a - $c) * ($a - $c) + (2*$b) * (2*$b)))/(2*$b));
         
-        //self::$equation['angle'] = $angle;
+        else 
+            // Else set angle to 0
+            // Is this always true?
+            self::$equation['angle'] = 0;
+        
         
         return self::$equation['angle'];
     }
-		
+    
+    // Calculate ellipse's center point of an array of x and y coordinate and return the result
     public static function getCenter() {
         $a = self::$equation['a'];  // A20   x^2 
         $b = self::$equation['b'];  // A10   xy
@@ -214,11 +224,11 @@ class Equation {
         $e = self::$equation['e'];  // A02   y
         $f = self::$equation['f'];  // A00   0
         
-        //$Cx = (2*$c * $d - $b * $e)/($b * $b - 4*$a * $c);
-	//var eq = this.equation;
-                
+        
+        //Calculate denominator for the ellipse’s center equation        
 	$denom = self::$equation['b']*self::$equation['b'] - 4*self::$equation['a']*self::$equation['c'];
-	$center = array('x' => (2*self::$equation['c']*self::$equation['d'] - self::$equation['b']*self::$equation['e'])/$denom,
+	// Calculate center coordinate array with the equation
+        $center = array('x' => (2*self::$equation['c']*self::$equation['d'] - self::$equation['b']*self::$equation['e'])/$denom,
             'y' => ((2*self::$equation['a']*self::$equation['e'] - self::$equation['d']*self::$equation['b'])/$denom));
         
         self::$center = $center;
@@ -255,7 +265,7 @@ class Equation {
 
     // From http://wwwf.imperial.ac.uk/~rn/distance2ellipse.pdf .
     // Calculates the distance of a point from the border of ellipse
-    public static function pointOnEllipse($a, $b, $p){
+    public static function pointOnEllipse($a, $b, $p) {
         $center = Equation::getCenter(); // Gets center
         $maxIterations = 10;
         $eps = 0.1/max($a, $b);
@@ -279,19 +289,21 @@ class Equation {
             $phi = $phi - $delta;
             if (abs($delta) < $eps)  { break; }
         }
-
+        
+        // Return best approximation from the iterations
         return array('x' => $center['x'] + $a * cos($phi), 'y' => $center['y'] + $b * sin($phi));
     }
     
-    public static function getErr(){
+    
+    public static function getErr() {
         return self::$equation['err'];
     }
     
-    public static function setErr(){
+    public static function setErr() {
         $equation['err'] = false;
     }
         
-    public static function getEllipseParams(){
+    public static function getEllipseParams() {
         return self::$equation;
     }
     
