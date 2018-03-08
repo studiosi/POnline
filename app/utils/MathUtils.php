@@ -7,12 +7,14 @@
 		private static $POINTS_PER_IMAGE = 110;
 		private static $MAX_ACCEPTABLE_STD_DEVS = 2;
 		
+                // Calculate current progress of points / total needed points
 		public static function calculateCurrentPercentage($clicks, $n_images) {
 			
 			return round(($clicks / MathUtils::calculateTotal($n_images)) * 100, 2);
 			
 		}
 		
+                // Return if the point is close enough the centroid
 		public static function isAcceptablePoint($pointList, $centroid, $newPoint, $distance) {
 			
 			$stdDev = MathUtils::calculatePointsStdDev($pointList, $centroid);
@@ -21,6 +23,7 @@
 
 		}
 		
+                // Return standard deviation of points distance from centroid
 		public static function calculatePointsStdDev($points, $centroid) {
 			
 			$distances = array();
@@ -32,12 +35,15 @@
 			
 		}
 		
+                // Return total needed points according to points in the database and the set
+                // $POINTS_PER_IMAGE class attribute
 		public static function calculateTotal($n_images) {
 			
 			return $n_images * MathUtils::$POINTS_PER_IMAGE;
 			
 		}
 		
+                // Return standard deviation of $values
 		public static function calculateStdDev($values) {
 			
 			$valuesMean = MathUtils::calculateMean($values);
@@ -48,6 +54,7 @@
 			
 		}
 		
+                // Return squared deviations of $values
 		public static function calculateSquaredDevs($values, $mean) {
 			
 			if(count($values) == 0 || is_nan($mean)) {
@@ -68,6 +75,7 @@
 			
 		}
 		
+                // Return mean of $values
 		public static function calculateMean($values) {
 			
 			if(count($values) == 0) {
@@ -91,6 +99,7 @@
 		}
 		
 		// Distance is always positive
+                // Return euclidean distance between $p1 and $p2
 		public static function calculateDistance($p1, $p2) {
 			
 			return sqrt(pow($p2['x'] - $p1['x'], 2) + pow($p2['y'] - $p1['y'], 2));
