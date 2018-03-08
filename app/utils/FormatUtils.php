@@ -4,6 +4,8 @@
 	
 	class FormatUtils {
 		
+                // Get point list from operational users only
+                // Ignores points that are input by banned users
 		public static function getFormattedOpePoints($points) {
 			
 			$pointList = array();
@@ -17,7 +19,7 @@
 			
 		}
                 
-                // For the timestamps function
+                // Returns player ids and timestamps of clicks as an array from operational users
                 public static function getFormattedOpeStamps($points) {
 			
 			$pointList = array();
@@ -31,6 +33,7 @@
 			
 		}
                 
+                // Format $points array to have only x and y keys
                 public static function getFormattedPoints($points) {
 			
 			$pointList = array();
@@ -43,6 +46,7 @@
 		}
                 
                 // Data for analysing clicks of images
+                // Format $points to have only click id, image id and player id
                 public static function getFormattedClicks($points) {
 			
 			$pointList = array();
@@ -54,13 +58,16 @@
 			
 		}
 		
+                // Formats input for twigs' JavaScript
 		public static function getJavascriptSerializedPoints($formatted_points, $centroid = false) {			
 			
 			if(count($formatted_points) == 0) {
 				
 				if($centroid) {
+                                        // If empty points and centroid, return an empty array
 					return "[]";
 				}
+                                // If empty points and not centroid, return empty two dimensional array
 				else {
 					return "[[]]";
 				}
