@@ -23,10 +23,6 @@ class Equation {
     );
     
     private static $center = array();
-    private static $f1_x = 0;
-    private static $f1_y = 0;
-    private static $f2_x = 0;
-    private static $f2_y = 0;
     private static $axisa = 0;
     private static $axisb = 0;
 	
