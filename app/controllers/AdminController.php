@@ -109,8 +109,8 @@
                     $points = $ransac->ransacAlg($pointsraw);
 
                     $centroid = array('x' => 0, 'y' => 0);
-                    Equation::setfrompoints($points);
-                    $centroid = Equation::getCenter();	
+                    Ellipse::setfrompoints($points);
+                    $centroid = Ellipse::getCenter();	
                     
                     if (($centroid['x'] >= 0) && ($centroid['y'] >= 0)) {
                         $temp1 = array_merge($image,$centroid);
@@ -163,13 +163,13 @@
 
                     $centroid = array('x' => 0, 'y' => 0);
 
-                    Equation::setfrompoints($points);
+                    Ellipse::setfrompoints($points);
 
-                    $centroid = Equation::getCenter();		
+                    $centroid = Ellipse::getCenter();		
                     
-                    $ellipse_params = Equation::getEllipseParams();
-                    $axis = Equation::getAxisLength();
-                    $angle = Equation::getAngle();
+                    $ellipse_params = Ellipse::getEllipseParams();
+                    $axis = Ellipse::getAxisLength();
+                    $angle = Ellipse::getAngle();
                     if (($centroid['x'] > 0) && ($centroid['y'] > 0)) {
                         $imcent = array_merge($image,$centroid);
                         array_push($imcent,$x+1);
@@ -236,13 +236,13 @@
                     $centroid = array('x' => 0, 'y' => 0);
 
                     // Calculate ellipse's params
-                    Equation::setfrompoints($points);
+                    Ellipse::setfrompoints($points);
                     // Get the center of the ellipse
-                    $centroid = Equation::getCenter();		
+                    $centroid = Ellipse::getCenter();		
                     
                     /* Uncomment if ellipse params are needed too
-                    $ellipse_params = Equation::getEllipseParams();
-                    $axis = Equation::getAxisLength(); */
+                    $ellipse_params = Ellipse::getEllipseParams();
+                    $axis = Ellipse::getAxisLength(); */
 
                     // Pixel coordinates have to be positive
                     if (($centroid['x'] >= 0) && ($centroid['y'] >= 0)) {
@@ -260,13 +260,13 @@
 
                     $centroid = array('x' => 0, 'y' => 0);
                     // Calculate ellipse's params
-                    Equation::setfrompoints($points);
+                    Ellipse::setfrompoints($points);
                     // Get the center of the ellipse
-                    $centroid = Equation::getCenter();	
+                    $centroid = Ellipse::getCenter();	
                     
                     /* Uncomment if ellipse params are needed too
-                    $ellipse_params = Equation::getEllipseParams();
-                    $axis = Equation::getAxisLength(); */
+                    $ellipse_params = Ellipse::getEllipseParams();
+                    $axis = Ellipse::getAxisLength(); */
 
                     // Pixel coordinates have to be positive
                     if (($centroid['x'] >= 0) && ($centroid['y'] >= 0)) {
@@ -324,8 +324,8 @@
                             if ($i > 5 ) { 
                                 $ransac = new Ransac;
                                 $points = $ransac->ransacAlg($chunked);
-                                Equation::setfrompoints($points);
-                                $centroid = Equation::getCenter();
+                                Ellipse::setfrompoints($points);
+                                $centroid = Ellipse::getCenter();
                                 if (($centroid['x'] > 0) && ($centroid['y'] > 0)) {
                                     $temp1 = array_merge($image,$centroid);
                                     fputcsv($fp, $temp1);
@@ -334,8 +334,8 @@
                             }
                             // Else get params according to five pts
                             else {
-                                Equation::setfrompoints($chunked);
-                                $centroid = Equation::getCenter();
+                                Ellipse::setfrompoints($chunked);
+                                $centroid = Ellipse::getCenter();
                                 $temp1 = array_merge($image,$centroid);
                                 fputcsv($fp, $temp1);
                                 $j = $j + 1;
