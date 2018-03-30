@@ -189,22 +189,22 @@
                         $centroid = array('x' => 0, 'y' => 0);
                         if (count($points) > 0) {
                             // Get ellipse params with the inlier points
-                            Equation::setfrompoints($points);
+                            Ellipse::setfrompoints($points);
                             
                             // Get centroid of the ellipse
-                            $centroid = Equation::getCenter();		
+                            $centroid = Ellipse::getCenter();		
 			}
                         
                         $axis = [0,1];
                         if (count($points) > 0) {
                             // Get major and minor axis length of the ellipse
-                            $axis = Equation::getAxisLength();
+                            $axis = Ellipse::getAxisLength();
                         }
                         
                         $angle = 0;
                         if (count($points) > 0) {
                             // Get the angle of the ellipse 
-                            $angle = Equation::getAngle();
+                            $angle = Ellipse::getAngle();
                         }
                         
                         // Serialize inlier points
@@ -256,22 +256,22 @@
                         $centroid = array('x' => 0, 'y' => 0);
                         if (count($points) > 0) {
                             // Get ellipse params with the inlier points
-                            Equation::setfrompoints($points);
+                            Ellipse::setfrompoints($points);
                             // Get centroid of the ellipse
-                            $centroid = Equation::getCenter();		
+                            $centroid = Ellipse::getCenter();		
 			}
                         
                         $axis = [0,1];
                         if (count($points) > 0) {
                             // Get major and minor axis length of the ellipse
-                            $axis = Equation::getAxisLength();
+                            $axis = Ellipse::getAxisLength();
                         }
                         
                         
                         $angle = 0;
                         if (count($points) > 0) {
                             // Get the angle of the ellipse 
-                            $angle = Equation::getAngle();
+                            $angle = Ellipse::getAngle();
                         }
                         
                         // Serialize inlier points
