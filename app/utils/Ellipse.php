@@ -20,13 +20,9 @@ class Ellipse {
         'angle' => 0,
         'err' => false
     );
-    
     private static $center = array();
     private static $axisa = 0;
     private static $axisb = 0;
-    // Just to help with the equation.php (should be moved back to there)
-    // Equation::setA($A); & Equation::getA(); are unecessary
-    private static $matA = array();
     
     public static function setfromequation($a, $b, $c, $d, $e, $f) {
         $equation['a'] = $a;
@@ -299,34 +295,5 @@ class Ellipse {
     public static function getEllipseParams() {
         return self::$equation;
     }
-    
-    /*
-    public static function pointOnEllipse(center: CGPoint, a: CGFloat, b: CGFloat, closestTo p: CGPoint) -> CGPoint {
-
-        let maxIterations = 10
-        let eps = CGFloat(0.1/max(a, b))
-
-        let p1 = CGPoint(x: p.x - center.x, y: p.y - center.y)
-
-        // Intersection of straight line from origin to p with ellipse
-        // as the first approximation:
-        var phi = atan2(a * p1.y, b * p1.x)
-
-        // Newton iteration to find solution of
-        // f(θ) := (a^2 − b^2) cos(phi) sin(phi) − x a sin(phi) + y b cos(phi) = 0:
-        for i in 0..<maxIterations {
-            // function value and derivative at phi:
-            let (c, s) = (cos(phi), sin(phi))
-            let f = (a*a - b*b)*c*s - p1.x*a*s + p1.y*b*c
-            let f1 = (a*a - b*b)*(c*c - s*s) - p1.x*a*c - p1.y*b*s
-
-            let delta = f/f1
-            phi = phi - delta
-            print(i)
-            if abs(delta) < eps { break }
-        }
-
-        return CGPoint(x: center.x + a * cos(phi), y: center.y + b * sin(phi))
-    } */
 
 }
