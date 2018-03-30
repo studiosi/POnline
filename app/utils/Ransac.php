@@ -49,34 +49,34 @@ namespace TU\Utils;
             } 
             
             // Fitting ellipse
-            Equation::setfrompoints($this->testinliers); 
+            Ellipse::setfrompoints($this->testinliers); 
             $finditer = 0;
             // If the testinlier's give an array with inf param value in the
             // equation. Fit until a proper array of five points is found.
-            while (Equation::getErr() == true) {
+            while (Ellipse::getErr() == true) {
                 shuffle($data);
                 for ($j = 0; $j < 5; $j++) {
                     $this->testinliers[$j] = $data[$j];
                 } 
-                Equation::setfrompoints($this->testinliers);
+                Ellipse::setfrompoints($this->testinliers);
                 $finditer = $finditer + 1;
                 // If a better model isn't found in 50 iters, just continue
                 if ($finditer > 50) {
-                    Equation::setErr();
+                    Ellipse::setErr();
                 }
             } 
             
             // Get ellipse's center point
-            $center = Equation::getCenter();
+            $center = Ellipse::getCenter();
             // Get ellipse's axis length
-            $axis = Equation::getAxisLength();
+            $axis = Ellipse::getAxisLength();
             
             //for every point in data not in testinliers {
             for ($i = 0; $i < count($data); $i++) {
                 $p = $data[$i];
                 if (!in_array($p, $this->testinliers)) {
                     // See how far the point is from the border
-                    $p2 =  Equation::pointOnEllipse($axis[0], $axis[1], $p);
+                    $p2 =  Ellipse::pointOnEllipse($axis[0], $axis[1], $p);
                     $v = array('dx' => $p['x'] - $p2['x'], 'dy' => $p['y'] - $p2['y']);
                     $distancefromborder = hypot($v['dx'], $v['dy']);
                     // Add to the error the distance from the border
