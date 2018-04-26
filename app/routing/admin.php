@@ -42,7 +42,10 @@
         
         $app->get('/admin/csv7', 'TU\Controllers\AdminController::getImgCountsForImprovement')
         ->bind('admin_csv7');
-               
+        
+        $app->get('/admin/csv8', 'TU\Controllers\AdminController::getRTimeCSV')
+        ->bind('admin_csv8');
+        
 	$app->get('/admin/see/{id}', 'TU\Controllers\ImageController::showPoints')
 	->bind('admin_show');
 	
