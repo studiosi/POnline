@@ -118,12 +118,60 @@
                         $i = $i + 1;
                     }
                 }
-                    
-                    
             }
             fclose($fp);
              
             return $app['twig']->render('csv.twig', array(
+                    
+            ));
+        }
+        
+        
+        /* RANSAC time analysis 
+         */
+        public function getRTimeCSV(Application $app) {
+            $imDAO = new ImageDAO();
+            $images = $imDAO->getAllImages($app);
+
+            $filter = 1; // Percentage of points to get    
+            $array_len = 0;    
+            $fp = fopen('/time.csv','w');
+            
+            // For every image
+            $time = 0;
+            foreach($images as $image) {   
+                
+
+                $pointsraw_unfiltered = $imDAO->getAllClicksImage($app, $image['id']);
+                $pointsraw_tmp = array_unique($pointsraw_unfiltered,SORT_REGULAR);
+                $pointsraw = array_values($pointsraw_tmp);
+                shuffle($pointsraw);    
+
+                $i = 0;
+                // Run RANSAC five times disabled
+                
+                    $ransac = new Ransac;
+                    $time_start = AdminController::microtime_float();
+                    $points = $ransac->ransacAlg($pointsraw);
+
+                    $centroid = array('x' => 0, 'y' => 0);
+                    Ellipse::setfrompoints($points);
+                    $centroid = Ellipse::getCenter();	
+                    
+                    
+                        $time_end = AdminController::microtime_float();
+                        $time = ($time_end - $time_start);
+                        $times = array($image['id'], count($pointsraw), $time);
+                        //$temp1 = array_merge($image, $times);
+                        fputcsv($fp, $times);
+                        //$i = $i + 1;
+                   
+                
+                    
+            }
+            fclose($fp);
+             
+            return $app['twig']->render('csv8.twig', array(
                     
             ));
         }
@@ -521,6 +569,11 @@
             return $app['twig']->render('csv5.twig', array(
                     
             ));
+        }
+        
+        function microtime_float() {
+            list($usec, $sec) = explode(" ", microtime());
+            return ((float)$usec + (float)$sec);
         }
     
 }
