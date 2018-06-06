@@ -127,7 +127,7 @@ class Ellipse {
         return ($x<0?"-":"+") + abs(round($x*1000)/1000);
     }
                 
-    // Convert the class equation into reduced equation form
+    // Print the ellipse equation
     public static function printEquation() {
         return  Ellipse::printCoeff(self::$equation['a']) . "x^2 "
                 . Ellipse::printCoeff(self::$equation['b']) . "xy "
@@ -137,7 +137,8 @@ class Ellipse {
                 . Ellipse::printCoeff(self::$equation['f']) . " = 0";
                         
 		}
-		
+                
+    // Convert the class equation into reduced equation form
     public static function convertToReducedEquation() {
         $eq = self::$equation;
         $t = atan(self::$equation['b'] / (self::$equation['c'] - self::$equation['a']))/2;
